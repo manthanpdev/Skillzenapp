@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   NativeScrollEvent,
@@ -14,13 +14,11 @@ import {
 import { Stack, useRouter } from "expo-router";
 import { theme } from "../../utils/theme/Theme";
 
-import { useDispatch } from "react-redux";
 // import { pages } from "@/src/assets/data/GetStartedData";
-import AppButton from "../ReusableComp/AppButton";
-import { pages } from "../../assets/Data/GetStartedData";
 import { Feature } from "@/utils/types/Apptypes";
 import { AppLogo, ArrowIcon, RocketIcon } from "../../assets/Svg/SvgIcons";
-
+import { pages } from "../../utils/constants/GetStartedData";
+import AppButton from "../ReusableComp/AppButton";
 
 // import { completeGetStarted } from "@/redux/actions";
 // import type { AppDispatch } from "@/redux/store";

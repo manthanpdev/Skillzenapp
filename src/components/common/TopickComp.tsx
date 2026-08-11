@@ -1,5 +1,4 @@
-import { DUMMY_TOPICS } from "../../assets/Data/dummyTopicks";
-import { CheckIcon, TopicIcon } from "../../assets/Svg/SvgIcons";
+import { ICON_PALETTE, theme } from "@/utils/theme/Theme";
 import { router } from "expo-router";
 import {
   FlatList,
@@ -9,7 +8,8 @@ import {
   View,
 } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import { ICON_PALETTE, theme } from "@/utils/theme/Theme";
+import { CheckIcon, TopicIcon } from "../../assets/Svg/SvgIcons";
+import { DUMMY_TOPICS } from "../../utils/constants/dummyTopicks";
 
 const RING_SIZE = 46;
 
