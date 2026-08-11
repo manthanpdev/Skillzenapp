@@ -3,9 +3,9 @@ import { useEffect, useRef } from "react";
 import { Animated, Dimensions, Easing, StyleSheet, View } from "react-native";
 import { theme } from "../../utils/theme/Theme";
 import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/redux/store";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/config/firebaseAuth";
-import type { AppDispatch } from "@/redux/store";
 import { clearUser, setUser } from "@/redux/reducers";
 import { toAppUser } from "@/services/authService";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
@@ -139,26 +139,24 @@ const SplashScreenAnimation = () => {
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start(() => {
-      Animated.timing(screenOpacity, {
-        toValue: 0,
-        duration: FADE_DURATION,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        const navigate = () => {
-          if (authUser) {
-            route.replace("/(tabs)");
-          } else {
-            route.replace("/(StackScreens)/GetStartedScreen");
-          }
-        };
-
+      const checkReady = setInterval(() => {
         if (authResolved) {
-          navigate();
-        } else {
-          setTimeout(navigate, 300);
+          clearInterval(checkReady);
+
+          Animated.timing(screenOpacity, {
+            toValue: 0,
+            duration: FADE_DURATION,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start(() => {
+            if (authUser) {
+              route.replace("/(tabs)");
+            } else {
+              route.replace("/(StackScreens)/GetStartedScreen");
+            }
+          });
         }
-      });
+      }, 100);
     });
 
     return unsubscribe;

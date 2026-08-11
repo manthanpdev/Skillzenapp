@@ -78,7 +78,7 @@ export type RegistrationCompProps = {
   }) => void;
   onLoginPress?: () => void;
   onGooglePress?: () => void;
-  isGoogleLoading?: any
+  isGoogleLoading?: any;
 };
 
 export type LoginFormValues = {
@@ -146,12 +146,24 @@ export type GlobalState = {
   // content selection
   categories?: Category[];
   topics?: Topic[];
+  lessons?: Lesson[];
   selectedCategoryId?: string | null;
   view?: ContentView;
   selectedCatogery?: TopicListItem[] | null;
   selectLessons?: any[];
-   isAuthResolved: boolean;
+  isAuthResolved: boolean;
+};
 
+export type Lesson = {
+  id: string;
+  topicId: string;
+  lessonNumber: number;
+  title: string;
+  overview: string;
+  example: {
+    title: string;
+    content: string;
+  };
 };
 
 export type BenefitCardProps = {
@@ -246,14 +258,13 @@ export type CategoriesCompProps = {
   searchQuery?: string;
 };
 
-
 export type AIContext = {
   question: string;
   currentUser: any;
   categories: any[];
   topics: any[];
   lessons: any[];
-}
+};
 
 export type ContinueLearningCardProps = {
   topicTitle: string;

@@ -1,23 +1,35 @@
-import { StoreData } from "@/services/Asyncstorage";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/config/firebaseConfig";
 
-export const GET_STARTED_KEY = "getStartedCompleted";
+import { Category, Topic, Lesson } from "../utils/types/Apptypes";
 
-export const GetCategories = createAsyncThunk("get/categories", async () => {
-  try {
-    return require("../assets/Data/categories.json");
-  } catch (error) {
-    console.log("Error to fetch Categories");
-    return [];
-  }
-});
-
-// Save that Get Started has been completed
-export const completeGetStarted = createAsyncThunk(
-  "global/completeGetStarted",
+export const fetchCategories = createAsyncThunk(
+  "categories/fetch",
   async () => {
-    await StoreData(GET_STARTED_KEY, true);
+    const data = await getDocs(collection(db, "categories"));
 
-    return true;
+    return data.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Category[];
   },
 );
+
+export const fetchTopics = createAsyncThunk("topics/fetch", async () => {
+  const data = await getDocs(collection(db, "topics"));
+
+  return data.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Topic[];
+});
+
+export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
+  const data = await getDocs(collection(db, "lessons"));
+
+  return data.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Lesson[];
+});

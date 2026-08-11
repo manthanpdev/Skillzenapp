@@ -1,18 +1,16 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { theme } from "../../utils/theme/Theme";
 import { CategoriesCompProps, Category } from "../../utils/types/Apptypes";
 import { router } from "expo-router";
 import CategoryCard from "./CategoryCard";
-import { AppDispatch, RootState } from "@/redux/store";
-import { GetCategories } from "@/redux/actions";
+import { RootState } from "@/redux/store";
 const SECTION_ENTRY_DELAY = 0;
 
 const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
   const { categories } = useSelector((state: RootState) => state.global);
-  const dispatch = useDispatch<AppDispatch>();
 
   const handlePress = () => {
     router.navigate("/(StackScreens)/TopickScreen");
@@ -31,10 +29,6 @@ const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
 
   const isSearchActive = searchQuery.trim().length > 0;
   const isEmpty = isSearchActive && filteredCategories.length === 0;
-
-  useEffect(() => {
-    dispatch(GetCategories()).unwrap();
-  }, [categories]);
 
   return (
     <Animated.View
