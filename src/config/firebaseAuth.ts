@@ -9,5 +9,5 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-console.log("🔥 Firebase Authentication initialized successfully");
-console.log("Firebase Auth App:", auth.app.options.projectId);
+// console.log("🔥 Firebase Authentication initialized successfully");
+// console.log("Firebase Auth App:", auth.app.options.projectId);

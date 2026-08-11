@@ -8,8 +8,10 @@ import {
   View,
 } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import { CheckIcon, TopicIcon } from "../../assets/Svg/SvgIcons";
+import { BackIcon, CheckIcon, TopicIcon } from "../../assets/Svg/SvgIcons";
 import { DUMMY_TOPICS } from "../../utils/constants/dummyTopicks";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AppButton from "../ReusableComp/AppButton";
 
 const RING_SIZE = 46;
 
@@ -26,6 +28,16 @@ const TopickComp = () => {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
+        <AppButton
+          icon={<BackIcon color={theme.colors.text} />}
+          onPress={() => router.back()}
+          backgroundColor={theme.colors.card}
+          width={38}
+          height={38}
+          borderRadius={theme.radius.sm}
+          style={styles.backButton}
+          hitSlop={10}
+        />
         <Text style={styles.headerTitle}>React Native CLI</Text>
         <Text style={styles.headerSubtitle}>Choose a topic</Text>
       </View>
@@ -103,6 +115,13 @@ const styles = StyleSheet.create({
   },
   header: {
     marginVertical: 10,
+    justifyContent: "center",
+  },
+  backButton: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 10,
   },
   headerTitle: {
     color: theme.colors.text,
@@ -119,7 +138,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingTop: theme.spacing.sm,
-    paddingBottom: 30,
+    paddingBottom: 60,
     gap: theme.spacing.sm,
   },
   row: {

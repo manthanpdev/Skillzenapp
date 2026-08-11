@@ -84,11 +84,12 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.title,
     fontWeight: "800",
     letterSpacing: -0.5,
-    marginBottom: 20,
-    //manthan 
+    marginBottom: 10,
+    marginTop: 5,
+    //manthan
   },
   ScrollCOntainer: {
-    paddingBottom: 600,
+    paddingBottom: 950,
   },
   emptyContainer: {
     alignItems: "center",

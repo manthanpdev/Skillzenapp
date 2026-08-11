@@ -57,7 +57,6 @@ const SplashScreenAnimation = () => {
       } else {
         dispatch(clearUser());
       }
-      console.log("🔥 Firebase user:", user?.email ?? "No user");
     });
 
     Animated.parallel([

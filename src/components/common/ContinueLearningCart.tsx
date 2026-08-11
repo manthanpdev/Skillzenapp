@@ -30,11 +30,6 @@ export const ContinueLearningCart = ({
             <Text style={styles.title}>{topicTitle}</Text>
           </View>
         </View>
-
-        <View style={styles.streakBadge}>
-          <AchievementIcon size={14} color={theme.colors.warning} />
-          <Text style={styles.streakText}>{streakDays}</Text>
-        </View>
       </View>
 
       {/* Progress row */}
@@ -117,20 +112,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: theme.colors.text,
   },
-  streakBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: "rgba(255,200,87,0.14)",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: theme.radius.round,
-  },
-  streakText: {
-    fontSize: theme.fontSize.caption,
-    color: theme.colors.warning,
-    fontWeight: "500",
-  },
+
+  
   progressRow: {
     marginBottom: theme.spacing.sm + 4,
   },

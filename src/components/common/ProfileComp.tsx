@@ -104,9 +104,6 @@ const ProfileComp = ({
               {currentUser.email}
             </Text>
  
-            {/* <View style={styles.badge}>
-              <Text style={styles.badgeText}>★ Pro Learner</Text>
-            </View> */}
           </View>
         </View>
  
