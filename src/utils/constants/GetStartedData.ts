@@ -1,7 +1,13 @@
-import { OnboardingPage } from "@/utils/types/Apptypes";
-import { BuildIcon, GrowthIcon, LessonsIcon, ProgressIcon, SkillsIcon, TasksIcon } from "../Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
-
+import { OnboardingPage } from "@/utils/types/Apptypes";
+import {
+  BuildIcon,
+  GrowthIcon,
+  LessonsIcon,
+  ProgressIcon,
+  SkillsIcon,
+  TasksIcon,
+} from "../../assets/Svg/SvgIcons";
 
 export const pages: OnboardingPage[] = [
   {

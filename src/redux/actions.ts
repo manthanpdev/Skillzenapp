@@ -1,5 +1,7 @@
+import { StoreData } from "@/services/Asyncstorage";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
+export const GET_STARTED_KEY = "getStartedCompleted";
 
 export const GetCategories = createAsyncThunk("get/categories", async () => {
   try {
@@ -9,3 +11,13 @@ export const GetCategories = createAsyncThunk("get/categories", async () => {
     return [];
   }
 });
+
+// Save that Get Started has been completed
+export const completeGetStarted = createAsyncThunk(
+  "global/completeGetStarted",
+  async () => {
+    await StoreData(GET_STARTED_KEY, true);
+
+    return true;
+  },
+);
