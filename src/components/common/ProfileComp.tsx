@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Image,
   Modal,
@@ -8,10 +7,12 @@ import {
   Text,
   View,
 } from "react-native";
-import AppButton from "../ReusableComp/AppButton";
-import { theme } from "../../utils/theme/Theme";
-import type { ProfileCompProps } from "../../utils/types/Apptypes";
+import { useState } from "react";
+ 
 
+ 
+import { theme } from "@/utils/theme/Theme";
+import type { ProfileCompProps } from "@/utils/types/Apptypes";
 import {
   PencilIcon,
   AchievementIcon,
@@ -25,7 +26,8 @@ import {
   GalleryIcon,
   DeleteIcon,
 } from "../../assets/Svg/SvgIcons";
-
+import AppButton from "../ReusableComp/AppButton";
+ 
 const ProfileComp = ({
   currentUser,
   isPhotoModalVisible,
@@ -37,539 +39,610 @@ const ProfileComp = ({
   onLogout,
 }: ProfileCompProps) => {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-
-  const firstLetter = currentUser?.fullName?.charAt(0)?.toUpperCase() || "U";
-
-  const profilePhoto = currentUser?.photo || currentUser?.googlePhoto || null;
-
-  const renderProfileImage = (size: number, borderWidth = 4) => {
+  const firstLetter = currentUser.fullName?.charAt(0).toUpperCase() || "U";
+ 
+ 
+  const renderProfileImage = (size: number, style?: object) => {
+    const profilePhoto = currentUser.photo || currentUser.googlePhoto;
+ 
     if (profilePhoto) {
       return (
         <Image
           source={{ uri: profilePhoto }}
-          style={{
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth,
-            borderColor: theme.colors.primary,
-          }}
+          style={[
+            {
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+            },
+            style,
+          ]}
         />
       );
     }
-
+ 
     return (
       <View
-        style={{
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: theme.colors.card,
-          justifyContent: "center",
-          alignItems: "center",
-          borderWidth,
-          borderColor: theme.colors.primary,
-        }}
+        style={[
+          styles.defaultImage,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+          },
+          style,
+        ]}
       >
-        <Text
-          style={{
-            color: theme.colors.text,
-            fontSize: size / 2.4,
-            fontWeight: "800",
-          }}
-        >
-          {firstLetter}
-        </Text>
+        <Text style={styles.defaultImageText}>{firstLetter}</Text>
       </View>
     );
   };
-
-  const MenuItem = ({
-    icon,
-    title,
-    onPress,
-  }: {
-    icon: React.ReactNode;
-    title: string;
-    onPress?: () => void;
-  }) => (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [styles.menuItem, pressed && { opacity: 0.7 }]}
-    >
-      <View style={styles.menuLeft}>
-        {icon}
-        <Text style={styles.menuText}>{title}</Text>
-      </View>
-
-      <ChevronRightIcon color={theme.colors.text} />
-    </Pressable>
-  );
-
-  const StatCard = ({ value, title }: { value: string; title: string }) => (
-    <View style={styles.statCard}>
-      <Text style={styles.statNumber}>{value}</Text>
-      <Text style={styles.statTitle}>{title}</Text>
-    </View>
-  );
-
-  const handleLogout = () => {
-    setIsLogoutModalVisible(false);
-    onLogout();
-  };
+ 
   return (
     <View style={styles.container}>
       <ScrollView
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        {/* ================= PROFILE ================= */}
-
-        <View style={styles.profileSection}>
-          <View style={styles.profileImageWrapper}>
-            {renderProfileImage(120)}
-
-            <Pressable style={styles.editButton} onPress={onOpenPhotoModal}>
-              <PencilIcon size={18} color={theme.colors.primary} />
+        <View style={styles.profileContainer}>
+          <View style={styles.imageContainer}>
+            {renderProfileImage(98, styles.profileImage)}
+ 
+            <Pressable
+              style={styles.editButton}
+              onPress={onOpenPhotoModal}
+              hitSlop={8}
+            >
+              <PencilIcon size={20} color={theme.colors.primary} />
             </Pressable>
           </View>
-
-          <Text style={styles.userName}>
-            {currentUser.fullName || "Manthan Patel"}
-          </Text>
-
-          <Text style={styles.userEmail}>
-            {currentUser.email || "manthan@gmail.com"}
-          </Text>
+ 
+          <View style={styles.userDetails}>
+            <Text style={styles.userName}>{currentUser.fullName}</Text>
+ 
+            <Text style={styles.userEmail} numberOfLines={2}>
+              {currentUser.email}
+            </Text>
+ 
+            {/* <View style={styles.badge}>
+              <Text style={styles.badgeText}>★ Pro Learner</Text>
+            </View> */}
+          </View>
         </View>
-
-        {/* ================= STATS ================= */}
-
-        <View style={styles.statsRow}>
-          <StatCard value="24" title="Lessons" />
-
-          <StatCard value="12" title="Tasks" />
-
-          <StatCard value="8" title="Quizzes" />
+ 
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Lessons</Text>
+            <Text style={styles.statValue}>0</Text>
+          </View>
+ 
+          <View style={styles.statDivider} />
+ 
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Tasks</Text>
+            <Text style={styles.statValue}>0</Text>
+          </View>
+ 
+          <View style={styles.statDivider} />
+ 
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Quizzes</Text>
+            <Text style={styles.statValue}>0</Text>
+          </View>
         </View>
-
-        {/* ================= MENU ================= */}
-
+ 
         <View style={styles.menuContainer}>
-          <MenuItem icon={<AchievementIcon />} title="Achievements" />
-
-          <MenuItem icon={<BookmarkIcon />} title="Bookmarks" />
-
-          <MenuItem icon={<DownloadIcon />} title="Downloads" />
-
-          <MenuItem icon={<SettingsIcon />} title="Settings" />
-
-          <MenuItem icon={<HelpIcon />} title="Help & Support" />
+          <Pressable
+            style={({ pressed }) => [
+              styles.menuItem,
+              pressed && styles.menuItemPressed,
+            ]}
+          >
+            <AchievementIcon />
+            <Text style={styles.menuText}>Achievements</Text>
+            <ChevronRightIcon color={theme.colors.text} />
+          </Pressable>
+ 
+          <View style={styles.divider} />
+ 
+          <Pressable
+            style={({ pressed }) => [
+              styles.menuItem,
+              pressed && styles.menuItemPressed,
+            ]}
+          >
+            <BookmarkIcon />
+ 
+            <Text style={styles.menuText}>Bookmarks</Text>
+ 
+            <ChevronRightIcon color={theme.colors.text} />
+          </Pressable>
+ 
+          <View style={styles.divider} />
+ 
+          <Pressable
+            style={({ pressed }) => [
+              styles.menuItem,
+              pressed && styles.menuItemPressed,
+            ]}
+          >
+            <DownloadIcon />
+            <Text style={styles.menuText}>Downloads</Text>
+            <ChevronRightIcon color={theme.colors.text} />
+          </Pressable>
         </View>
-
-        {/* ================= LOGOUT ================= */}
-
+ 
+        <View style={styles.menuContainer}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.menuItem,
+              pressed && styles.menuItemPressed,
+            ]}
+          >
+            <SettingsIcon />
+            <Text style={styles.menuText}>Settings</Text>
+            <ChevronRightIcon color={theme.colors.text} />
+          </Pressable>
+ 
+          <View style={styles.divider} />
+ 
+          <Pressable
+            style={({ pressed }) => [
+              styles.menuItem,
+              pressed && styles.menuItemPressed,
+            ]}
+          >
+            <HelpIcon />
+            <Text style={styles.menuText}>Help & Support</Text>
+            <ChevronRightIcon color={theme.colors.text} />
+          </Pressable>
+        </View>
+ 
         <AppButton
           title="Logout"
           icon={<LogoutIcon />}
           iconPosition="left"
           height={56}
-          borderRadius={18}
-          backgroundColor="#FF4D67"
-          textColor="#FFFFFF"
+          backgroundColor={theme.colors.surface}
+          textColor="#FF4D67"
+          borderRadius={15}
+          borderwidth={1}
+          bordercolor={theme.colors.border}
+          fontSize={16}
+          fontweight="500"
           onPress={() => setIsLogoutModalVisible(true)}
           style={styles.logoutButton}
         />
-
-        {/* ================= PHOTO MODAL ================= */}
-
-        <Modal
-          visible={isPhotoModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={onClosePhotoModal}
-        >
-          <Pressable
-            style={styles.centerModalBackground}
-            onPress={onClosePhotoModal}
-          >
-            <Pressable style={styles.photoModal} onPress={() => {}}>
-              {renderProfileImage(90, 3)}
-
-              <Text style={styles.photoTitle}>Change Profile Photo</Text>
-
-              <Pressable style={styles.photoOption} onPress={onTakePhoto}>
+      </ScrollView>
+ 
+      <Modal
+        visible={isPhotoModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={onClosePhotoModal}
+      >
+        <Pressable style={styles.modalBackground} onPress={onClosePhotoModal}>
+          <Pressable style={styles.modalContent} onPress={() => {}}>
+            <View style={styles.modalHandle} />
+ 
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderSpace} />
+ 
+              <Text style={styles.modalTitle}>Change Profile Photo</Text>
+ 
+              <Pressable
+                style={styles.closeButton}
+                onPress={onClosePhotoModal}
+                hitSlop={8}
+              >
+                <Text style={styles.closeText}>×</Text>
+              </Pressable>
+            </View>
+ 
+            <View style={styles.modalImageContainer}>
+              {renderProfileImage(112, styles.modalProfileImage)}
+            </View>
+ 
+            <View style={styles.photoButtonsContainer}>
+              <Pressable style={styles.photoOptionButton} onPress={onTakePhoto}>
                 <CameraIcon />
-
+ 
                 <Text style={styles.photoOptionText}>Take Photo</Text>
               </Pressable>
-
+ 
               <Pressable
-                style={styles.photoOption}
+                style={styles.photoOptionButton}
                 onPress={onSelectFromGallery}
               >
                 <GalleryIcon />
-
-                <Text style={styles.photoOptionText}>Select From Gallery</Text>
+ 
+                <Text style={styles.photoOptionText}>Select from Gallery</Text>
               </Pressable>
-
-              <Pressable
-                style={styles.deletePhotoButton}
-                onPress={onDeletePhoto}
-              >
-                <DeleteIcon />
-
-                <Text style={styles.deleteText}>Delete Photo</Text>
-              </Pressable>
-
+            </View>
+ 
+            <Pressable style={styles.deleteButton} onPress={onDeletePhoto}>
+              <DeleteIcon />
+ 
+              <Text style={styles.deleteButtonText}>Delete Photo</Text>
+            </Pressable>
+ 
+            <AppButton
+              title="Cancel"
+              height={52}
+              backgroundColor={theme.colors.surface}
+              textColor={theme.colors.text}
+              borderRadius={14}
+              borderwidth={1}
+              bordercolor={theme.colors.border}
+              fontSize={15}
+              fontweight="700"
+              onPress={onClosePhotoModal}
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
+      <Modal
+        visible={isLogoutModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsLogoutModalVisible(false)}
+      >
+        <View style={styles.confirmOverlay}>
+          <View style={styles.confirmContainer}>
+            <LogoutIcon />
+ 
+            <Text style={styles.confirmTitle}>Logout?</Text>
+ 
+            <Text style={styles.confirmMessage}>
+              Are you sure you want to logout from your account?
+            </Text>
+ 
+            <View style={styles.confirmButtons}>
               <AppButton
-                title="Close"
-                height={50}
-                borderRadius={14}
+                title="Cancel"
+                width="48%"
+                height={48}
                 backgroundColor={theme.colors.surface}
+                textColor={theme.colors.text}
+                borderRadius={12}
                 borderwidth={1}
                 bordercolor={theme.colors.border}
-                textColor={theme.colors.text}
-                onPress={onClosePhotoModal}
+                onPress={() => setIsLogoutModalVisible(false)}
               />
-            </Pressable>
-          </Pressable>
-        </Modal>
-        {/* ================= LOGOUT MODAL ================= */}
-
-        <Modal
-          visible={isLogoutModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setIsLogoutModalVisible(false)}
-        >
-          <View style={styles.centerModalBackground}>
-            <View style={styles.logoutModal}>
-              <View style={styles.logoutIconContainer}>
-                <LogoutIcon />
-              </View>
-
-              <Text style={styles.logoutTitle}>Logout?</Text>
-
-              <Text style={styles.logoutSubtitle}>
-                Are you sure you want to logout from your account?
-              </Text>
-
-              <View style={styles.logoutButtons}>
-                <AppButton
-                  title="Cancel"
-                  width="48%"
-                  height={50}
-                  borderRadius={14}
-                  backgroundColor={theme.colors.surface}
-                  borderwidth={1}
-                  bordercolor={theme.colors.border}
-                  textColor={theme.colors.text}
-                  onPress={() => setIsLogoutModalVisible(false)}
-                />
-
-                <AppButton
-                  title="Logout"
-                  width="48%"
-                  height={50}
-                  borderRadius={14}
-                  backgroundColor="#FF4D67"
-                  textColor="#FFFFFF"
-                  onPress={handleLogout}
-                />
-              </View>
+ 
+              <AppButton
+                title="Logout"
+                width="48%"
+                height={48}
+                backgroundColor="#FF4D67"
+                textColor="#FFFFFF"
+                borderRadius={12}
+                onPress={() => {
+                  setIsLogoutModalVisible(false);
+                  onLogout();
+                }}
+              />
             </View>
           </View>
-        </Modal>
-      </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 };
-
+ 
 export default ProfileComp;
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
   },
-
+ 
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    paddingBottom: 40,
+    paddingHorizontal: 16,
+    paddingTop:30,
+    paddingBottom: 30,
   },
-
-  profileSection: {
+ 
+  profileContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 28,
+    paddingHorizontal: 4,
+    marginBottom: 22,
   },
-
-  profileImageWrapper: {
-    width: 126,
-    height: 126,
+ 
+  imageContainer: {
+    width: 98,
+    height: 98,
+    position: "relative",
+  },
+ 
+  profileImage: {
+    borderWidth: 3,
+    borderColor: "#C8FF00",
+  },
+ 
+  defaultImage: {
+    backgroundColor: theme.colors.card,
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 18,
   },
-
+ 
+  defaultImageText: {
+    color: theme.colors.text,
+    fontSize: 38,
+    fontWeight: "800",
+  },
+ 
   editButton: {
     position: "absolute",
     right: 0,
-    bottom: 4,
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: theme.colors.surface,
-    justifyContent: "center",
+    bottom: 3,
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    backgroundColor: "#000000",
     alignItems: "center",
+    justifyContent: "center",
+  },
+ 
+  userDetails: {
+    flex: 1,
+    marginLeft: 16,
+  },
+ 
+  userName: {
+    color: theme.colors.text,
+    fontSize: 22,
+    fontWeight: "800",
+  },
+ 
+  userEmail: {
+    color: theme.colors.muted,
+    fontSize: 14,
+    marginTop: 5,
+  },
+ 
+  badge: {
+    alignSelf: "flex-start",
+    marginTop: 11,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 9,
+    backgroundColor: "#2D176A",
+  },
+ 
+  badgeText: {
+    color: theme.colors.text,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+ 
+  statsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: 17,
+    paddingVertical: 17,
+    marginBottom: 14,
+  },
+ 
+  statItem: {
+    flex: 1,
+    alignItems: "center",
+  },
+ 
+  statLabel: {
+    color: theme.colors.muted,
+    fontSize: 12,
+    marginBottom: 6,
+  },
+ 
+  statValue: {
+    color: theme.colors.text,
+    fontSize: 24,
+    fontWeight: "800",
+  },
+ 
+  statDivider: {
+    width: 1,
+    height: 35,
+    backgroundColor: theme.colors.divider,
+  },
+ 
+  menuContainer: {
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: 17,
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+ 
+  menuItem: {
+    minHeight: 60,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+ 
+  menuItemPressed: {
+    opacity: 0.6,
+    backgroundColor: theme.colors.card,
+  },
+ 
+  menuText: {
+    flex: 1,
+    color: theme.colors.text,
+    fontSize: 15,
+    fontWeight: "600",
+    marginLeft: 12,
+  },
+ 
+  divider: {
+    height: 1,
+    marginLeft: 51,
+    backgroundColor: theme.colors.divider,
+  },
+ 
+  logoutButton: {
+    justifyContent: "flex-start",
+    paddingHorizontal: 16,
+  },
+ 
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(1, 7, 18, 0.76)",
+  },
+ 
+  modalContent: {
+    backgroundColor: theme.colors.surface,
+    borderTopLeftRadius: 26,
+    borderTopRightRadius: 26,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 22,
+  },
+ 
+  modalHandle: {
+    width: 52,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: theme.colors.muted,
+    alignSelf: "center",
+    opacity: 0.6,
+    marginBottom: 16,
+  },
+ 
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+ 
+  modalHeaderSpace: {
+    width: 34,
+  },
+ 
+  modalTitle: {
+    flex: 1,
+    color: theme.colors.text,
+    fontSize: 19,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+ 
+  closeButton: {
+    width: 34,
+    height: 34,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+ 
+  closeText: {
+    color: theme.colors.text,
+    fontSize: 28,
+    lineHeight: 30,
+  },
+ 
+  modalImageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+ 
+  modalProfileImage: {
     borderWidth: 2,
     borderColor: theme.colors.primary,
   },
-
-  userName: {
-    color: theme.colors.text,
-    fontSize: 25,
-    fontWeight: "800",
-    marginBottom: 6,
-  },
-
-  userEmail: {
-    color: theme.colors.muted,
-    fontSize: 15,
-    marginBottom: 18,
-  },
-
-  levelContainer: {
+ 
+  photoButtonsContainer: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
+    marginBottom: 12,
   },
-
-  levelBadge: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-
-  levelText: {
-    color: theme.colors.text,
-    fontWeight: "700",
-    fontSize: 13,
-  },
-
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 22,
-  },
-
-  statCard: {
-    width: "31%",
-    backgroundColor: theme.colors.surface,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingVertical: 20,
+ 
+  photoOptionButton: {
+    flex: 1,
+    minHeight: 96,
     alignItems: "center",
-  },
-
-  statNumber: {
-    color: theme.colors.primary,
-    fontSize: 28,
-    fontWeight: "800",
-  },
-
-  statTitle: {
-    color: theme.colors.muted,
-    marginTop: 6,
-    fontSize: 13,
-  },
-
-  learningCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 18,
-    marginBottom: 24,
-  },
-
-  learningTitle: {
-    color: theme.colors.text,
-    fontSize: 20,
-    fontWeight: "800",
-  },
-
-  learningSubtitle: {
-    color: theme.colors.muted,
-    fontSize: 14,
-    lineHeight: 22,
-    marginTop: 10,
-    marginBottom: 18,
-  },
-
-  progressBackground: {
-    height: 10,
-    borderRadius: 5,
+    justifyContent: "center",
     backgroundColor: theme.colors.card,
-    overflow: "hidden",
-  },
-
-  progressFill: {
-    width: "78%",
-    height: "100%",
-    backgroundColor: theme.colors.primary,
-    borderRadius: 5,
-  },
-
-  progressText: {
-    color: theme.colors.primary,
-    fontWeight: "700",
-    marginTop: 10,
-    fontSize: 13,
-  },
-
-  menuContainer: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 22,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    marginBottom: 26,
-    overflow: "hidden",
+    borderRadius: 14,
+    paddingHorizontal: 8,
   },
-
-  menuItem: {
-    height: 66,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-
-  menuLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  menuText: {
+ 
+  photoOptionText: {
     color: theme.colors.text,
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 16,
+    fontSize: 14,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 8,
   },
-
-  logoutButton: {
-    marginBottom: 30,
+ 
+  deleteButton: {
+    height: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255, 77, 103, 0.55)",
+    borderRadius: 14,
+    backgroundColor: theme.colors.card,
+    marginBottom: 12,
   },
-
-  centerModalBackground: {
+ 
+  deleteButtonText: {
+    color: "#FF4D67",
+    fontSize: 15,
+    fontWeight: "800",
+    marginLeft: 10,
+  },
+  confirmOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.65)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     paddingHorizontal: 24,
   },
-  photoModal: {
+ 
+  confirmContainer: {
     width: "100%",
     backgroundColor: theme.colors.surface,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 22,
-    alignItems: "center",
-  },
-
-  photoTitle: {
-    color: theme.colors.text,
-    fontSize: 20,
-    fontWeight: "800",
-    marginTop: 18,
-    marginBottom: 24,
-  },
-
-  photoOption: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.card,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-    marginBottom: 14,
-  },
-
-  photoOptionText: {
-    color: theme.colors.text,
-    fontSize: 15,
-    fontWeight: "600",
-    marginLeft: 14,
-  },
-
-  deletePhotoButton: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,77,103,0.12)",
-    borderWidth: 1,
-    borderColor: "#FF4D67",
-    borderRadius: 16,
-    paddingVertical: 16,
-    marginTop: 4,
-    marginBottom: 20,
-  },
-
-  deleteText: {
-    color: "#FF4D67",
-    fontSize: 15,
-    fontWeight: "700",
-    marginLeft: 12,
-  },
-
-  logoutModal: {
-    width: "100%",
-    backgroundColor: theme.colors.surface,
-    borderRadius: 24,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: theme.colors.border,
     padding: 24,
     alignItems: "center",
   },
-
-  logoutIconContainer: {
-    width: 78,
-    height: 78,
-    borderRadius: 39,
-    backgroundColor: "rgba(255,77,103,0.15)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 18,
-  },
-
-  logoutTitle: {
+ 
+  confirmTitle: {
     color: theme.colors.text,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "800",
+    marginTop: 16,
   },
-
-  logoutSubtitle: {
+ 
+  confirmMessage: {
     color: theme.colors.muted,
     fontSize: 15,
     textAlign: "center",
-    lineHeight: 24,
+    lineHeight: 22,
     marginTop: 10,
-    marginBottom: 26,
+    marginBottom: 24,
   },
-
-  logoutButtons: {
-    width: "100%",
+ 
+  confirmButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
   },
 });
+ 
+ 

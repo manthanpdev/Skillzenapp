@@ -78,6 +78,7 @@ export type RegistrationCompProps = {
   }) => void;
   onLoginPress?: () => void;
   onGooglePress?: () => void;
+  isGoogleLoading?: any
 };
 
 export type LoginFormValues = {
@@ -103,19 +104,22 @@ export type TopicProgress = {
   lastLessonIndex: number;
   completed: boolean;
 };
-export type User = {
+
+export type UserData = {
   id: string;
-  fullName: string;
+  fullName: any;
   email: string;
   password?: string;
   photo?: string;
   googlePhoto?: string;
   loginType: "email" | "google";
   userData: TopicProgress[];
+  uid: string;
+  photoURL: string | null;
 };
 
 export type ProfileCompProps = {
-  currentUser: User;
+  currentUser: UserData;
   isPhotoModalVisible: boolean;
 
   onOpenPhotoModal: () => void;
@@ -134,7 +138,7 @@ export type TopicListItem = {
 };
 
 export type GlobalState = {
-  currentUser: User | null;
+  currentUser: UserData | null;
   getStartedCompleted: boolean;
   isLoading: boolean;
   error: string | null;
@@ -146,6 +150,8 @@ export type GlobalState = {
   view?: ContentView;
   selectedCatogery?: TopicListItem[] | null;
   selectLessons?: any[];
+   isAuthResolved: boolean;
+
 };
 
 export type BenefitCardProps = {

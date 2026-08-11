@@ -1,3 +1,4 @@
+import { RootState } from "@/redux/store";
 import { NotificationIcon } from "../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
 import { StyleSheet, Text, View } from "react-native";
@@ -5,13 +6,13 @@ import { useSelector } from "react-redux";
 // import { RootState } from "@/redux/store";
 
 const HomeScreenHeaderComp = () => {
-  // const { currentUser } = useSelector((state: RootState) => state.global);
+  const { currentUser } = useSelector((state: RootState) => state.global);
 
   return (
     <View style={styles.container}>
       <View style={styles.leftContent}>
         <View style={styles.helloRow}>
-          <Text style={styles.hello}>Hello, jeeten</Text>
+          <Text style={styles.hello}>Hello, {currentUser?.fullName} </Text>
         </View>
         <Text style={styles.subtitle}>Let's keep learning every day!</Text>
       </View>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -18,6 +19,7 @@ const RegistrationComp = ({
   onRegister,
   onLoginPress,
   onGooglePress,
+  isGoogleLoading,
 }: RegistrationCompProps) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -180,19 +182,26 @@ const RegistrationComp = ({
             <View style={styles.divider} />
           </View>
 
-          <AppButton
-            title="Continue with Google"
-            icon={<GoogleIcon />}
-            iconPosition="left"
-            height={46}
-            backgroundColor={theme.colors.surface}
-            textColor={theme.colors.text}
-            borderRadius={10}
-            fontSize={14}
-            fontweight="600"
-            onPress={onGooglePress}
-            style={styles.googleButton}
-          />
+           <AppButton
+      title={isGoogleLoading ? "Signing in..." : "Continue with Google"}
+      icon={
+        isGoogleLoading ? (
+          <ActivityIndicator size="small" color={theme.colors.text} />
+        ) : (
+          <GoogleIcon />
+        )
+      }
+      iconPosition="left"
+      height={46}
+      backgroundColor={theme.colors.surface}
+      textColor={theme.colors.text}
+      borderRadius={10}
+      fontSize={14}
+      fontweight="600"
+      onPress={onGooglePress}
+      disabled={isGoogleLoading}
+      style={styles.googleButton}
+    />
 
           <View style={styles.loginContainer}>
             <Text style={styles.accountText}>Already have an account?</Text>

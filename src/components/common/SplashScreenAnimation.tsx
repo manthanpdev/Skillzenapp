@@ -1,13 +1,15 @@
-  import { useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Animated, Dimensions, Easing, StyleSheet, View } from "react-native";
-import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { theme } from "../../utils/theme/Theme";
-
 import { useDispatch } from "react-redux";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebaseAuth";
+import type { AppDispatch } from "@/redux/store";
+import { clearUser, setUser } from "@/redux/reducers";
+import { toAppUser } from "@/services/authService";
+import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { AppLogo } from "../../assets/Svg/SvgIcons";
-// import { GetCategories, loadAppData } from "@/redux/actions";
-// import type { AppDispatch } from "@/redux/store";
 
 const { width, height } = Dimensions.get("window");
 const TRACK_WIDTH = width * 0.6;
@@ -27,7 +29,7 @@ const GLOW_SIZE = 100;
 
 const SplashScreenAnimation = () => {
   const route = useRouter();
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const progress = useRef(new Animated.Value(0)).current;
   const screenOpacity = useRef(new Animated.Value(1)).current;
 
@@ -44,7 +46,20 @@ const SplashScreenAnimation = () => {
   const textTranslateY = useRef(new Animated.Value(8)).current;
 
   useEffect(() => {
-    // const appDataPromise = dispatch(loadAppData()).unwrap();
+    let authUser: typeof auth.currentUser = null;
+    let authResolved = false;
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      authUser = user;
+      authResolved = true;
+      if (user) {
+        dispatch(setUser(toAppUser(user)));
+      } else {
+        dispatch(clearUser());
+      }
+      console.log("🔥 Firebase user:", user?.email ?? "No user");
+    });
+
     Animated.parallel([
       // logo fades in fast — the drop itself is the star of the show
       Animated.timing(logoOpacity, {
@@ -131,17 +146,23 @@ const SplashScreenAnimation = () => {
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start(() => {
-        // const appData = await appDataPromise;
-        // await dispatch(GetCategories()).unwrap();
-        // if (appData.currentUser) {
-        //   route.replace("/(tabs)");
-        // } else if (appData.getStartedCompleted) {
-        //   route.replace("/loginScreen");
-        // } else {
-          route.replace("/(StackScreens)/GetStartedScreen");
-        // }
+        const navigate = () => {
+          if (authUser) {
+            route.replace("/(tabs)");
+          } else {
+            route.replace("/(StackScreens)/GetStartedScreen");
+          }
+        };
+
+        if (authResolved) {
+          navigate();
+        } else {
+          setTimeout(navigate, 300);
+        }
       });
     });
+
+    return unsubscribe;
   }, []);
 
   const progressWidth = progress.interpolate({

@@ -1,5 +1,6 @@
 import {
   Alert,
+  ActivityIndicator,
   StyleSheet,
   View,
   ScrollView,
@@ -9,23 +10,24 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
-import CustomTextInput from "../ReusableComp/CustomTextInput"
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
+import CustomTextInput from "../ReusableComp/CustomTextInput";
 import AppButton from "../ReusableComp/AppButton";
 import { LoginErrorsProps } from "@/utils/types/Apptypes";
 import { theme } from "@/utils/theme/Theme";
 import { GoogleIcon } from "../../assets/Svg/SvgIcons";
-
-// import { googleSignInUser, loginUser } from "@/redux/actions";
-// import type { AppDispatch } from "@/redux/store";
+import { loginUser, signInWithGoogle, toAppUser } from "@/services/authService";
+import type { AppDispatch } from "@/redux/store";
+import { setUser } from "@/redux/reducers";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LoginComponent = () => {
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const [password, setPassword] = useState("");
   const [email, setemail] = useState("");
   const [errors, setErrors] = useState<LoginErrorsProps>({});
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: LoginErrorsProps = {};
@@ -61,18 +63,31 @@ const LoginComponent = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      // await dispatch(googleSignInUser()).unwrap();
-      router.replace("/(tabs)");
-    } catch (error) {
-      console.log("Google Sign-In error:", error);
+    if (isGoogleLoading) return;
 
-      Alert.alert(
-        "Google Sign-In failed",
-        error instanceof Error
-          ? error.message
-          : "Unable to sign in with Google",
-      );
+    setIsGoogleLoading(true);
+    try {
+      const user = await signInWithGoogle();
+      dispatch(setUser(toAppUser(user)));
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      console.log("Google Sign-In error:", error);
+      let message = "Unable to sign in with Google.";
+      switch (error?.code) {
+        case "auth/network-request-failed":
+          message = "Please check your internet connection.";
+          break;
+        case "auth/account-exists-with-different-credential":
+          message =
+            "An account already exists with a different sign-in method.";
+          break;
+        case "auth/invalid-credential":
+          message = "Google sign-in credentials are invalid.";
+          break;
+      }
+      Alert.alert("Google Sign-In failed", message);
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -80,24 +95,33 @@ const LoginComponent = () => {
     if (!validate()) {
       return;
     }
-
     try {
-      // await dispatch(
-      //   loginUser({
-      //     email: email.trim().toLowerCase(),
-      //     password,
-      //   })
-      // ).unwrap();
-
+      const user = await loginUser(email.trim().toLowerCase(), password);
+      dispatch(setUser(toAppUser(user)));
       router.replace("/(tabs)");
-    } catch (error) {
+    } catch (error: any) {
       console.log("Login error:", error);
-
-      const message =
-        error && typeof error === "object" && "message" in error
-          ? String(error.message)
-          : "Unable to login";
-
+      let message = "Unable to login.";
+      switch (error?.code) {
+        case "auth/invalid-credential":
+          message = "Invalid email or password.";
+          break;
+        case "auth/user-not-found":
+          message = "No account found with this email.";
+          break;
+        case "auth/wrong-password":
+          message = "Incorrect password.";
+          break;
+        case "auth/invalid-email":
+          message = "Please enter a valid email address.";
+          break;
+        case "auth/user-disabled":
+          message = "This account has been disabled.";
+          break;
+        case "auth/network-request-failed":
+          message = "Please check your internet connection.";
+          break;
+      }
       Alert.alert("Login failed", message);
     }
   };
@@ -157,17 +181,24 @@ const LoginComponent = () => {
         <View style={styles.box2}>
           <AppButton
             height={46}
-            icon={<GoogleIcon />}
+            icon={
+              isGoogleLoading ? (
+                <ActivityIndicator size="small" color={theme.colors.text} />
+              ) : (
+                <GoogleIcon />
+              )
+            }
             iconPosition="left"
             backgroundColor={theme.colors.surface}
             borderwidth={1}
             bordercolor={theme.colors.border}
-            title="Continue with google"
+            title={isGoogleLoading ? "Signing in..." : "Continue with google"}
             textColor={theme.colors.text}
             fontweight="600"
             fontSize={14}
             borderRadius={10}
             onPress={handleGoogleSignIn}
+            disabled={isGoogleLoading}
           />
         </View>
         <View style={styles.box3}>

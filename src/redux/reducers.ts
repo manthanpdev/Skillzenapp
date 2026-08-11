@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import {
   GetCategories,
 } from "./actions";
-import { GlobalState } from "../utils/types/Apptypes";
+import { GlobalState, UserData,  } from "../utils/types/Apptypes";
 
 
 const initialState: GlobalState = {
@@ -14,6 +14,7 @@ const initialState: GlobalState = {
   categories: [],
   selectedCatogery: [],
   selectLessons: [],
+  isAuthResolved: false
 };
 
 const globalSlice = createSlice({
@@ -22,6 +23,16 @@ const globalSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+
+    setUser: (state, action: PayloadAction<UserData>) => {
+      state.currentUser = action.payload;
+      state.isAuthResolved = true;
+    },
+
+    clearUser: (state) => {
+      state.currentUser = null;
+      state.isAuthResolved = true;
     },
   },
 
@@ -47,6 +58,6 @@ const globalSlice = createSlice({
   },
 });
 
-export const { clearError } = globalSlice.actions;
+export const { clearError,clearUser,setUser } = globalSlice.actions;
 
 export default globalSlice.reducer;
