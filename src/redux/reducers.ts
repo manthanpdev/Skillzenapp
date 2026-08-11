@@ -1,25 +1,30 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import {
-  GetCategories,
-} from "./actions";
-import { GlobalState, UserData,  } from "../utils/types/Apptypes";
+import { fetchCategories, fetchTopics, fetchLessons } from "./actions";
 
+import { GlobalState, UserData } from "../utils/types/Apptypes";
 
 const initialState: GlobalState = {
   currentUser: null,
   getStartedCompleted: false,
   isLoading: false,
   error: null,
+
   categories: [],
+  topics: [],
+  lessons: [],
+
   selectedCatogery: [],
   selectLessons: [],
-  isAuthResolved: false
+
+  isAuthResolved: false,
 };
 
 const globalSlice = createSlice({
   name: "global",
+
   initialState,
+
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -37,27 +42,35 @@ const globalSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    // Categories
     builder
-
-      // getting catogeries
-      .addCase(GetCategories.pending, (state) => {
+      .addCase(fetchCategories.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
 
-      .addCase(GetCategories.fulfilled, (state, action) => {
+      .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(GetCategories.rejected, (state, action) => {
+      .addCase(fetchCategories.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || "Unable to fetch categories";
-      })
+      });
 
+    // Topics
+    builder.addCase(fetchTopics.fulfilled, (state, action) => {
+      state.topics = action.payload;
+    });
+
+    // Lessons
+    builder.addCase(fetchLessons.fulfilled, (state, action) => {
+      state.lessons = action.payload;
+      state.isLoading = false;
+    });
   },
 });
 
-export const { clearError,clearUser,setUser } = globalSlice.actions;
+export const { clearError, clearUser, setUser } = globalSlice.actions;
 
 export default globalSlice.reducer;
