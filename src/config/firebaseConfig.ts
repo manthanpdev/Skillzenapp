@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDjy1Q1uaF0trbGdk4wOyBqJwAJatuKAZg",
@@ -10,6 +11,8 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
-console.log("🔥 Firebase initialized successfully");
-console.log("Firebase Project ID:", app.options.projectId);
+
+// console.log("🔥 Firebase initialized successfully");
+// console.log("Firebase Project ID:", app.options.projectId);
