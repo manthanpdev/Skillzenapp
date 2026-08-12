@@ -1,12 +1,7 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppButtonProp } from "../../utils/types/Apptypes";
 import { theme } from "../../utils/theme/Theme";
 import AppActivityIndicator from "./AppActivityIndicator";
-import React from "react";
 
 const AppButton = ({
   title,
@@ -39,62 +34,68 @@ const AppButton = ({
 
   const resolvedTitle = loading ? (loadingTitle ?? title) : title;
 
- const handlePress = () => {
-  if (isDisabled) return;
-  onPress?.();
-};
-
   return (
     <Pressable
-      onPress={handlePress}
       disabled={isDisabled}
+      onPress={onPress}
       hitSlop={hitSlop}
-      style={[
-        styles.base,
+      style={({ pressed }) => [
+        styles.button,
         {
+          width,
           height,
-          width:
-            width === "auto"
-              ? undefined
-              : ((width as number | `${number}%`) ?? "100%"),
           backgroundColor,
           borderRadius,
           borderWidth: borderwidth,
           borderColor: bordercolor,
-          opacity: isDisabled ? 0.7 : 1,
+          opacity: pressed || isDisabled ? 0.75 : 1,
         },
         style,
       ]}
     >
-      {resolvedIcon && iconPosition === "left" && resolvedIcon}
-      <Text
-        style={[
-          styles.text,
-          {
-            color: textColor,
-            fontSize,
-            fontWeight: fontweight,
-            marginHorizontal: resolvedIcon ? 8 : 0,
-          },
-          textStyle,
-        ]}
-      >
-        {resolvedTitle}
-      </Text>
-      {resolvedIcon && iconPosition === "right" && resolvedIcon}
+      {resolvedIcon && iconPosition === "left" && (
+        <View style={styles.iconContainer}>{resolvedIcon}</View>
+      )}
+
+      {resolvedTitle ? (
+        <Text
+          style={[
+            styles.text,
+            {
+              color: textColor,
+              fontSize,
+              fontWeight: fontweight,
+            },
+            textStyle,
+          ]}
+        >
+          {resolvedTitle}
+        </Text>
+      ) : null}
+
+      {resolvedIcon && iconPosition === "right" && (
+        <View style={styles.iconContainer}>{resolvedIcon}</View>
+      )}
     </Pressable>
   );
 };
 
+export default AppButton;
+
 const styles = StyleSheet.create({
-  base: {
+  button: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
   },
+
   text: {
     textAlign: "center",
   },
-});
 
-export default React.memo(AppButton);
+  iconContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

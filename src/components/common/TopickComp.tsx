@@ -83,6 +83,7 @@ const TopickComp = () => {
           borderRadius={theme.radius.sm}
           style={styles.backButton}
           hitSlop={10}
+  
         />
 
         <Text style={styles.headerTitle}>{category?.title ?? "Topics"}</Text>
@@ -214,6 +215,7 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 10,
   },
+
 
   headerTitle: {
     color: theme.colors.text,

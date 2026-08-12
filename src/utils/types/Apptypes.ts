@@ -52,6 +52,7 @@ export type AppButtonProp = {
   textStyle?: StyleProp<TextStyle>;
   fontweight?: TextStyle["fontWeight"];
   hitSlop?: number;
+  showTitle?: boolean
 };
 
 export type CustomTextInputProps = TextInputProps & {
@@ -131,7 +132,7 @@ export type ProfileCompProps = {
   onSelectFromGallery: () => void;
   onDeletePhoto: () => void;
   onLogout: () => void;
-  isLoggingOut?:boolean,
+  isLoggingOut?: boolean,
 };
 
 export type TopicListItem = {
@@ -266,7 +267,7 @@ export type SearchBarProps = {
 
 export type CategoriesCompProps = {
   searchQuery?: string;
-  ismarginTop?:boolean
+  ismarginTop?: boolean
 };
 
 export type AIContext = {

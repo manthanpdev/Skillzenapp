@@ -62,7 +62,6 @@ const CategoriesComp = ({
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.ScrollCOntainer}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
           >
@@ -90,10 +89,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     marginBottom: 10,
     marginTop: 5,
-  },
-
-  ScrollCOntainer: {
-    paddingBottom: 1000,
   },
 
   emptyContainer: {
