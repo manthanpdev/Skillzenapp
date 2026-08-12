@@ -147,14 +147,19 @@ export type GlobalState = {
   isLoading: boolean;
   error: string | null;
 
-  // content selection
-  categories?: Category[];
-  topics?: Topic[];
-  lessons?: Lesson[];
+  categories: Category[];
+  topics: Topic[];
+  lessons: Lesson[];
+
   selectedCategoryId?: string | null;
+  selectedTopicId?: string | null;
+
   view?: ContentView;
   selectedCatogery?: TopicListItem[] | null;
+  isTopicsLoading: boolean;
+  isLessonsLoading: boolean;
   selectLessons?: any[];
+
   isAuthResolved: boolean;
 };
 
@@ -223,6 +228,7 @@ export type Topic = {
   order: number;
   title: string;
   content: ContentBlock[];
+  totalLessons: number;
 };
 
 export type Category = {

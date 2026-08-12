@@ -10,6 +10,7 @@ import { clearUser, setUser } from "@/redux/reducers";
 import { toAppUser } from "@/services/authService";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { AppLogo } from "../../assets/Svg/SvgIcons";
+import { fetchCategories } from "@/redux/actions";
 
 const { width, height } = Dimensions.get("window");
 const TRACK_WIDTH = width * 0.6;
@@ -48,6 +49,7 @@ const SplashScreenAnimation = () => {
   useEffect(() => {
     let authUser: typeof auth.currentUser = null;
     let authResolved = false;
+    let categoriesResolved = false;
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       authUser = user;
@@ -58,6 +60,12 @@ const SplashScreenAnimation = () => {
         dispatch(clearUser());
       }
     });
+
+    dispatch(fetchCategories())
+      .unwrap()
+      .finally(() => {
+        categoriesResolved = true;
+      });
 
     Animated.parallel([
       // logo fades in fast — the drop itself is the star of the show
@@ -140,7 +148,7 @@ const SplashScreenAnimation = () => {
       useNativeDriver: false,
     }).start(() => {
       const checkReady = setInterval(() => {
-        if (authResolved) {
+        if (authResolved && categoriesResolved) {
           clearInterval(checkReady);
 
           Animated.timing(screenOpacity, {

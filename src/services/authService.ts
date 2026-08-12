@@ -12,18 +12,16 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 import { auth } from "../config/firebaseAuth";
 import { db } from "@/config/firebaseConfig";
-import { UserData } from "@/utils/types/Apptypes";
 
 // ================================
 // Email / Password Registration
 // ================================
 
-
 export const toAppUser = (user: User): any => ({
   uid: user.uid,
   fullName: user.displayName,
   photoURL: user.photoURL,
-  email: user.email
+  email: user.email,
 });
 
 export const registerUser = async (
@@ -39,7 +37,6 @@ export const registerUser = async (
 
   const user = userCredential.user;
 
-
   // Save user's name in Firebase Authentication
   await updateProfile(user, {
     displayName: fullName,
@@ -52,6 +49,7 @@ export const registerUser = async (
     email: user.email,
     photoURL: user.photoURL ?? null,
     provider: "password",
+    userdata: [],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -59,11 +57,7 @@ export const registerUser = async (
   return user;
 };
 
-
-export const loginUser = async (
-  email: string,
-  password: string,
-) => {
+export const loginUser = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,
@@ -97,12 +91,8 @@ export const signInWithGoogle = async () => {
   if (!idToken) {
     throw new Error("Google ID token was not received");
   }
-  const googleCredential =
-    GoogleAuthProvider.credential(idToken);
-  const userCredential = await signInWithCredential(
-    auth,
-    googleCredential,
-  );
+  const googleCredential = GoogleAuthProvider.credential(idToken);
+  const userCredential = await signInWithCredential(auth, googleCredential);
   const user = userCredential.user;
   await setDoc(
     doc(db, "users", user.uid),
@@ -112,6 +102,7 @@ export const signInWithGoogle = async () => {
       email: user.email,
       photoURL: user.photoURL ?? null,
       provider: "google",
+      userdata: [],
       updatedAt: serverTimestamp(),
     },
     { merge: true },

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   FadeIn,
   useAnimatedScrollHandler,
@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  FadeOut,
 } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/redux/store";
@@ -16,13 +17,13 @@ import CustomeSearch from "../ReusableComp/CustomeSearch";
 import BenefitsSection from "./BenefitsSection";
 import CategoriesComp from "./CatogeriesComp";
 import { ContinueLearningComp } from "./ContinueLearningCompTwo";
-import { theme } from "../../utils/theme/Theme";
 
 const HomeComponent = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  const measuredHeight = useSharedValue(0);
+  const collapseProgress = useSharedValue(1);
 
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
@@ -32,35 +33,6 @@ const HomeComponent = () => {
   });
 
   const isSearching = isSearchFocused || searchQuery.length > 0;
-
-  const handleClearSearch = useCallback(() => {
-    setSearchQuery("");
-    setIsSearchFocused(false);
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadCategories = async () => {
-      try {
-        await dispatch(fetchCategories()).unwrap();
-      } catch (error) {
-        console.log("❌ Failed to load categories:", error);
-      } finally {
-        if (isMounted) setCategoriesLoading(false);
-      }
-    };
-
-    loadCategories();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch]);
-
-  // ---- smooth collapse logic ----
-  const measuredHeight = useSharedValue(0);
-  const collapseProgress = useSharedValue(1); // 1 = fully shown, 0 = fully collapsed
 
   useEffect(() => {
     collapseProgress.value = withTiming(isSearching ? 0 : 1, {
@@ -90,10 +62,13 @@ const HomeComponent = () => {
         measuredHeight.value = h;
       }
     },
-    []
+    [],
   );
-  // --------------------------------
 
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
+    setIsSearchFocused(false);
+  }, []);
   return (
     <Animated.ScrollView
       style={styles.container}
@@ -113,22 +88,19 @@ const HomeComponent = () => {
         onFocusChange={setIsSearchFocused}
       />
 
-      <Animated.View style={collapsibleStyle} pointerEvents={isSearching ? "none" : "auto"}>
+      <Animated.View
+        style={collapsibleStyle}
+        pointerEvents={isSearching ? "none" : "auto"}
+      >
         <View onLayout={onMeasureLayout}>
           <BenefitsSection />
           <ContinueLearningComp margintop={isSearching} scrollY={scrollY} />
         </View>
       </Animated.View>
 
-      {categoriesLoading ? (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
-      ) : (
-        <Animated.View entering={FadeIn.duration(200)}>
-          <CategoriesComp ismarginTop={isSearching} searchQuery={searchQuery} />
-        </Animated.View>
-      )}
+      <Animated.View entering={FadeIn.duration(200)}>
+        <CategoriesComp ismarginTop={isSearching} searchQuery={searchQuery} />
+      </Animated.View>
     </Animated.ScrollView>
   );
 };
@@ -143,6 +115,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     // paddingBottom: 24,
   },
+
   loaderContainer: {
     paddingVertical: 40,
     alignItems: "center",
