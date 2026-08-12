@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 
 import { Category, Topic, Lesson } from "../utils/types/Apptypes";
@@ -8,7 +8,6 @@ export const fetchCategories = createAsyncThunk(
   "categories/fetch",
   async () => {
     const data = await getDocs(collection(db, "categories"));
-
     return data.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -16,20 +15,34 @@ export const fetchCategories = createAsyncThunk(
   },
 );
 
-export const fetchTopics = createAsyncThunk("topics/fetch", async () => {
-  const data = await getDocs(collection(db, "topics"));
+export const fetchTopicsByCategory = createAsyncThunk(
+  "topics/fetchByCategory",
+  async (categoryId: string) => {
+    const topicsQuery = query(
+      collection(db, "topics"),
+      where("categoryId", "==", categoryId),
+    );
 
-  return data.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Topic[];
-});
+    const data = await getDocs(topicsQuery);
+    return data.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Topic[];
+  },
+);
 
-export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
-  const data = await getDocs(collection(db, "lessons"));
+export const fetchLessonsByTopic = createAsyncThunk(
+  "lessons/fetchByTopic",
+  async (topicId: string) => {
+    const lessonsQuery = query(
+      collection(db, "lessons"),
+      where("topicId", "==", topicId),
+    );
 
-  return data.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Lesson[];
-});
+    const data = await getDocs(lessonsQuery);
+    return data.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Lesson[];
+  },
+);

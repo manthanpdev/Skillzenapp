@@ -1,110 +1,100 @@
-import { Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 
 import { useState } from "react";
 import AppButton from "../ReusableComp/AppButton";
+
 import {
   BackIcon,
   ChevronRightIcon,
   DoneIcon,
-  QuestionIcon,
 } from "../../assets/Svg/SvgIcons";
+
 import { theme } from "@/utils/theme/Theme";
 
-const lessons = [
-  {
-    id: "rn-cli-introduction-lesson-1",
-    topicId: "rn-cli-introduction",
-    lessonNumber: 1,
-    title: "What is React Native?",
-    overview:
-      "React Native is an open-source framework developed by Meta that allows developers to build native Android and iOS applications using JavaScript or TypeScript. Instead of writing separate code for each platform, developers can use a single codebase while React Native renders real native UI components, providing users with a smooth and native-like experience.",
-    example: {
-      title: "Your First React Native Component",
-      content: `import { View, Text } from 'react-native';
+import { useDispatch, useSelector } from "react-redux";
 
-export default function App() {
-  return (
-    <View>
-      <Text>Hello React Native!</Text>
-    </View>
-  );
-}`,
-    },
-  },
-  {
-    id: "rn-cli-introduction-lesson-2",
-    topicId: "rn-cli-introduction",
-    lessonNumber: 2,
-    title: "History of React Native",
-    overview:
-      "React Native was introduced by Meta in 2015 after engineers looked for a way to build mobile applications using the same principles as React. Since then, it has become one of the most popular frameworks for cross-platform mobile development and is trusted by companies worldwide.",
-    example: {
-      title: "Timeline",
-      content:
-        "React Native was announced by Meta in 2015. Since then, thousands of companies and developers have adopted it to build Android and iOS applications from a single codebase.",
-    },
-  },
-  {
-    id: "rn-cli-introduction-lesson-3",
-    topicId: "rn-cli-introduction",
-    lessonNumber: 3,
-    title: "Why Should You Learn React Native?",
-    overview:
-      "React Native is widely used in the mobile development industry because it allows developers to build applications for both Android and iOS using one codebase. Learning React Native opens opportunities to create real-world applications while reducing development time and maintenance effort.",
-    example: {
-      title: "Real-World Example",
-      content:
-        "Imagine a startup wants both an Android app and an iPhone app. Instead of hiring two separate development teams, they can build most of the application using React Native, saving both time and money.",
-    },
-  },
-  {
-    id: "rn-cli-introduction-lesson-4",
-    topicId: "rn-cli-introduction",
-    lessonNumber: 4,
-    title: "Advantages of React Native",
-    overview:
-      "React Native offers many advantages including code reusability, faster development with Fast Refresh, access to native device features, excellent community support, and the ability to build high-performance mobile applications using familiar JavaScript and TypeScript syntax.",
-    example: {
-      title: "Key Benefits",
-      content: `• Single codebase for Android and iOS
-- Faster development
-- Native user interface
-- Large community support
-- Reusable components
-- Easy maintenance`,
-    },
-  },
-  {
-    id: "rn-cli-introduction-lesson-5",
-    topicId: "rn-cli-introduction",
-    lessonNumber: 5,
-    title: "Topic Summary",
-    overview:
-      "Congratulations! You have completed the Introduction to React Native topic. You now know what React Native is, its history, why developers use it, and its major advantages. These concepts provide the foundation for understanding how React Native works internally in the next topic.",
-    example: {
-      title: "Quick Revision",
-      content: `✔ React Native was developed by Meta.
-✔ It uses JavaScript or TypeScript.
-✔ One codebase can build Android and iOS apps.
-✔ It renders native UI components.
-✔ It is widely used in the industry.`,
-    },
-  },
-];
+import { AppDispatch, RootState } from "@/redux/store";
+
+import { updateTopicProgress } from "@/redux/reducers";
 
 const LessonComp = () => {
   const router = useRouter();
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { lessons, selectedTopicId, topics, currentUser, isLessonsLoading } =
+    useSelector((state: RootState) => state.global);
+
+  const selectedTopic = topics.find((topic) => topic.id === selectedTopicId);
+
+  const topicLessons = lessons
+    .filter((lesson) => lesson.topicId === selectedTopicId)
+    .sort((a, b) => a.lessonNumber - b.lessonNumber);
+
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
-  const lesson = lessons[currentLessonIndex];
-  const isLastLesson = currentLessonIndex === lessons.length - 1;
+  const lesson = topicLessons[currentLessonIndex];
+  const isLastLesson =
+    topicLessons.length > 0 && currentLessonIndex === topicLessons.length - 1;
+
+  const progressPercent =
+    topicLessons.length === 0
+      ? 0
+      : Math.round((currentLessonIndex / topicLessons.length) * 100);
+
+  const completeCurrentLesson = () => {
+    if (!currentUser || !selectedTopicId || topicLessons.length === 0) {
+      return;
+    }
+
+    dispatch(
+      updateTopicProgress({
+        categoryTitle: selectedTopic?.title ?? "",
+        topicId: selectedTopicId,
+        lastLessonIndex: currentLessonIndex,
+        completed: isLastLesson,
+      }),
+    );
+  };
+
+  if (isLessonsLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+  if (!lesson) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>No lessons found</Text>
+
+        <Text style={styles.emptySubtitle}>
+          This topic does not have any lessons yet.
+        </Text>
+
+        <AppButton
+          title="Go Back"
+          onPress={() => router.back()}
+          backgroundColor={theme.colors.primary}
+          textColor={theme.colors.black}
+          width={120}
+          height={45}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* ---------------- Header ---------------- */}
-
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <AppButton
@@ -114,17 +104,13 @@ const LessonComp = () => {
             style={styles.backButton}
           />
 
-          <Text style={styles.lessonTitle}>
-            {lesson?.title ?? "Lesson Title"}
-          </Text>
+          <Text style={styles.lessonTitle}>{lesson.title}</Text>
         </View>
 
         <Text style={styles.lessonCount}>
-          Lesson {currentLessonIndex + 1} of {lessons.length}
+          Lesson {currentLessonIndex + 1} of {topicLessons.length}
         </Text>
       </View>
-
-      {/* ---------------- Progress ---------------- */}
 
       <View style={styles.progressContainer}>
         <View style={styles.progressTrack}>
@@ -132,46 +118,29 @@ const LessonComp = () => {
             style={[
               styles.progressFill,
               {
-                width: `${
-                  lessons.length === 0
-                    ? 0
-                    : ((currentLessonIndex + 1) / lessons.length) * 100
-                }%`,
+                width: `${progressPercent}%`,
               },
             ]}
           />
         </View>
 
-        <Text style={styles.progressText}>
-          {lessons.length === 0
-            ? 0
-            : Math.round(((currentLessonIndex + 1) / lessons.length) * 100)}
-          %
-        </Text>
+        <Text style={styles.progressText}>{progressPercent}%</Text>
       </View>
-
-      {/* ---------------- Content ---------------- */}
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Overview */}
-
         <Text style={styles.sectionTitle}>Overview</Text>
-
-        <Text style={styles.overviewText}>{lesson?.overview}</Text>
-
-        {/* Example */}
-
+        <Text style={styles.overviewText}>{lesson.overview}</Text>
         <Text style={styles.sectionTitle}>Example</Text>
 
         <View style={styles.exampleCard}>
-          <Text style={styles.exampleTitle}>{lesson?.example?.title}</Text>
+          <Text style={styles.exampleTitle}>{lesson.example.title}</Text>
 
           <View style={styles.codeCard}>
             <Text selectable style={styles.codeText}>
-              {lesson?.example?.content}
+              {lesson.example.content}
             </Text>
           </View>
         </View>
@@ -179,35 +148,25 @@ const LessonComp = () => {
         <View style={{ height: 20 }} />
       </ScrollView>
 
-      {/* ---------------- Footer ---------------- */}
-
       <View style={styles.footer}>
-        {/* Left Button */}
-        <AppButton
-          icon={<BackIcon />}
-          iconPosition="left"
-          title={"Previous"}
-          height={50}
-          width="48%"
-          disabled={!isLastLesson && currentLessonIndex === 0}
-          onPress={() => {
-            if (isLastLesson) {
-              // Navigate to Quiz Screen
-              //   router.navigate("/(stackScreens)/QuizScreen");
-            } else {
-              if (currentLessonIndex > 0) {
-                setCurrentLessonIndex((prev) => prev - 1);
-              }
-            }
-          }}
-          backgroundColor={theme.colors.card}
-          textStyle={{ fontSize: 15 }}
-          textColor={isLastLesson ? theme.colors.white : theme.colors.text}
-          borderwidth={1}
-          bordercolor={theme.colors.border}
-        />
+        {currentLessonIndex > 0 && (
+          <AppButton
+            icon={<BackIcon />}
+            iconPosition="left"
+            title="Previous"
+            height={50}
+            width="48%"
+            onPress={() => {
+              setCurrentLessonIndex((prev) => prev - 1);
+            }}
+            backgroundColor={theme.colors.card}
+            textStyle={{ fontSize: 15 }}
+            textColor={theme.colors.text}
+            borderwidth={1}
+            bordercolor={theme.colors.border}
+          />
+        )}
 
-        {/* Right Button */}
         <AppButton
           icon={
             isLastLesson ? (
@@ -219,8 +178,10 @@ const LessonComp = () => {
           iconPosition="right"
           title={isLastLesson ? "Done" : "Next"}
           height={50}
-          width="48%"
+          width={currentLessonIndex === 0 ? "100%" : "48%"}
           onPress={() => {
+            completeCurrentLesson();
+
             if (isLastLesson) {
               router.back();
             } else {
@@ -244,6 +205,28 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
 
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+  },
+
+  emptyTitle: {
+    color: theme.colors.text,
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+
+  emptySubtitle: {
+    color: theme.colors.muted,
+    fontSize: 15,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
   header: {
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.md,
@@ -258,6 +241,13 @@ const styles = StyleSheet.create({
   backButton: {
     width: 10,
     height: 40,
+  },
+
+  loaderContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.background,
   },
 
   lessonTitle: {
@@ -294,7 +284,6 @@ const styles = StyleSheet.create({
   },
 
   progressFill: {
-    width: "15%",
     height: "100%",
     backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.round,
@@ -339,6 +328,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: theme.spacing.sm,
   },
+
   codeCard: {
     backgroundColor: "#111827",
     borderRadius: 12,
