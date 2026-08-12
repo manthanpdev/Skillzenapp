@@ -78,7 +78,7 @@ const ProfileComp = ({
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -218,8 +218,6 @@ const ProfileComp = ({
       >
         <Pressable style={styles.modalBackground} onPress={onClosePhotoModal}>
           <Pressable style={styles.modalContent} onPress={() => {}}>
-            <View style={styles.modalHandle} />
-
             <View style={styles.modalHeader}>
               <View style={styles.modalHeaderSpace} />
 
@@ -323,7 +321,7 @@ const ProfileComp = ({
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -492,16 +490,19 @@ const styles = StyleSheet.create({
 
   modalBackground: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "rgba(1, 7, 18, 0.76)",
+    paddingHorizontal: 15,
   },
 
   modalContent: {
+    width: "100%",
+    maxWidth: 420,
     backgroundColor: theme.colors.surface,
-    borderTopLeftRadius: 26,
-    borderTopRightRadius: 26,
+    borderRadius: 20,
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 20,
     paddingBottom: 22,
   },
 
