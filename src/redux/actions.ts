@@ -9,6 +9,7 @@ export const fetchCategories = createAsyncThunk(
   "categories/fetch",
   async () => {
     const data = await getDocs(collection(db, "categories"));
+
     return data.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -41,6 +42,7 @@ export const fetchLessonsByTopic = createAsyncThunk(
     );
 
     const data = await getDocs(lessonsQuery);
+
     return data.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -49,5 +51,5 @@ export const fetchLessonsByTopic = createAsyncThunk(
 );
 
 export const logOutUser = createAsyncThunk("user/logout", async () => {
-  await logOutCurrentUser()
-})
+  await logOutCurrentUser();
+});

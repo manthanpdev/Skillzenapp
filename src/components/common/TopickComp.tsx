@@ -163,7 +163,7 @@ const TopickComp = () => {
                     {item.title}
                   </Text>
 
-                  <Text style={styles.meta}>Topic {item.order}</Text>
+                  <Text style={styles.meta}>{item.totalLessons} Lessons</Text>
                 </View>
 
                 <View style={styles.progressWrap}>
