@@ -25,6 +25,7 @@ import {
   DeleteIcon,
 } from "../../assets/Svg/SvgIcons";
 import AppButton from "../ReusableComp/AppButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ProfileComp = ({
   currentUser,
@@ -336,8 +337,7 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 30,
-    paddingBottom: 30,
+    paddingTop: 5,
   },
 
   profileContainer: {

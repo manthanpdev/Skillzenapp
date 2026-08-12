@@ -1,16 +1,21 @@
 import HomeComponent from "@/components/common/HomeComponent";
-import {
-  SafeAreaView,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
+import { stylePropsBuilder } from "react-native-reanimated/lib/typescript/common";
 
 const index = () => {
-
-
   return (
-    <SafeAreaView style={{ flex: 1 }}  edges={["top"]} >
+    <SafeAreaView style={styles.constainer} edges={["top"]}>
       <HomeComponent />
     </SafeAreaView>
   );
 };
 
 export default index;
+
+const styles = StyleSheet.create({
+  constainer: {
+    flex: 1,
+    paddingTop: 10,
+  },
+});
