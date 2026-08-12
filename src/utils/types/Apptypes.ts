@@ -34,6 +34,8 @@ export type OnboardingPage = {
 
 export type AppButtonProp = {
   title?: string;
+  loadingTitle?: string;
+  loading?: boolean;
   onPress?: () => void;
   width?: DimensionValue;
   height?: number;
@@ -79,6 +81,7 @@ export type RegistrationCompProps = {
   onLoginPress?: () => void;
   onGooglePress?: () => void;
   isGoogleLoading?: any;
+  isRegisterLoading?: any,
 };
 
 export type LoginFormValues = {
@@ -128,6 +131,7 @@ export type ProfileCompProps = {
   onSelectFromGallery: () => void;
   onDeletePhoto: () => void;
   onLogout: () => void;
+  isLoggingOut?:boolean,
 };
 
 export type TopicListItem = {
@@ -256,6 +260,7 @@ export type SearchBarProps = {
 
 export type CategoriesCompProps = {
   searchQuery?: string;
+  ismarginTop?:boolean
 };
 
 export type AIContext = {
@@ -275,3 +280,13 @@ export type ContinueLearningCardProps = {
   streakDays: number;
   onResume: () => void;
 };
+
+
+type IndicatorSize = "small" | "large";
+
+export type AppActivityIndicatorProps = {
+  size?: IndicatorSize;
+  color?: string;
+  fullscreen?: boolean;
+  style?: ViewStyle;
+}

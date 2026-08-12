@@ -14,12 +14,12 @@ import { GoogleIcon } from "../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
 import { RegistrationCompProps } from "@/utils/types/Apptypes";
 
-
 const RegistrationComp = ({
   onRegister,
   onLoginPress,
   onGooglePress,
   isGoogleLoading,
+  isRegisterLoading,
 }: RegistrationCompProps) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,6 +72,7 @@ const RegistrationComp = ({
   };
 
   const handleCreateAccount = () => {
+    if (isRegisterLoading) return;
     if (!validateForm()) {
       return;
     }
@@ -164,16 +165,16 @@ const RegistrationComp = ({
                 setConfirmPasswordError("");
               }}
             />
-
             <AppButton
               title="Create Account"
+              loadingTitle="Creating account..."
+              loading={isRegisterLoading}
               height={46}
               fontSize={15}
               onPress={handleCreateAccount}
               style={styles.createAccountButton}
             />
           </View>
-
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
 
@@ -182,26 +183,22 @@ const RegistrationComp = ({
             <View style={styles.divider} />
           </View>
 
-           <AppButton
-      title={isGoogleLoading ? "Signing in..." : "Continue with Google"}
-      icon={
-        isGoogleLoading ? (
-          <ActivityIndicator size="small" color={theme.colors.text} />
-        ) : (
-          <GoogleIcon />
-        )
-      }
-      iconPosition="left"
-      height={46}
-      backgroundColor={theme.colors.surface}
-      textColor={theme.colors.text}
-      borderRadius={10}
-      fontSize={14}
-      fontweight="600"
-      onPress={onGooglePress}
-      disabled={isGoogleLoading}
-      style={styles.googleButton}
-    />
+          <AppButton
+            title="Continue with google"
+            loadingTitle="Signing in..."
+            loading={isGoogleLoading}
+            height={46}
+            backgroundColor={theme.colors.surface}
+            borderwidth={1}
+            bordercolor={theme.colors.border}
+            textColor={theme.colors.text}
+            fontweight="600"
+            fontSize={14}
+            borderRadius={10}
+            icon={<GoogleIcon />}
+            iconPosition="left"
+            onPress={onGooglePress}
+          />
 
           <View style={styles.loginContainer}>
             <Text style={styles.accountText}>Already have an account?</Text>

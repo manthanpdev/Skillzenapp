@@ -1,5 +1,7 @@
+// CategoryCard.tsx
 import { memo, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { LinearGradient } from "react-native-linear-gradient";
 import Animated, {
   Easing,
@@ -10,13 +12,13 @@ import Animated, {
   useSharedValue,
   withDelay,
   withRepeat,
+  withSequence,
   withTiming,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { theme } from "../../utils/theme/Theme";
 import { Category } from "@/utils/types/Apptypes";
 import { ChevronRightIcon } from "../../assets/Svg/SvgIcons";
-
-
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -27,6 +29,7 @@ const SWEEP_DURATION = 1100;
 const HOLD_DURATION = 1400;
 const CYCLE_DURATION = SWEEP_DURATION + HOLD_DURATION;
 const SWEEP_FRACTION = SWEEP_DURATION / CYCLE_DURATION;
+const SHIMMER_REPEAT_COUNT = 3;
 
 const CategoryCard = memo(
   ({
@@ -39,7 +42,6 @@ const CategoryCard = memo(
     onPress: (c: Category) => void;
   }) => {
     const pressed = useSharedValue(0);
-    // const buttonPressed = useSharedValue(0);
     const shimmerProgress = useSharedValue(0);
     const iconNudge = useSharedValue(0);
 
@@ -49,10 +51,14 @@ const CategoryCard = memo(
         startDelay,
         withRepeat(
           withTiming(1, { duration: CYCLE_DURATION, easing: Easing.linear }),
-          -1,
+          SHIMMER_REPEAT_COUNT,
           false,
         ),
       );
+
+      return () => {
+        cancelAnimation(shimmerProgress);
+      };
     }, [index, shimmerProgress]);
 
     const cardStyle = useAnimatedStyle(() => ({
@@ -94,63 +100,72 @@ const CategoryCard = memo(
 
     return (
       <Animated.View entering={FadeInDown.delay(index * 60).duration(300)}>
+    
         <AnimatedPressable
           onPressIn={() => (pressed.value = 1)}
           onPressOut={() => (pressed.value = 0)}
           onPress={() => onPress(item)}
-          style={[styles.cardWrap, cardStyle]}
+          style={[styles.cardShadowWrap, cardStyle]}
         >
-          <Animated.Image
-            source={{ uri: item.image }}
-            style={[styles.image, imageStyle]}
-            resizeMode="cover"
-          />
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.15)", "rgba(0,0,0,0.70)"]}
-            locations={[0, 0.5, 1]}
-            style={StyleSheet.absoluteFill}
-          />
+          {/* Inner view owns the clip. No shadow here, so no forced layer. */}
+          <View style={styles.cardClip}>
+            <Animated.View style={[StyleSheet.absoluteFill, imageStyle]}>
+              <Image
+                source={{ uri: item.image }}
+                style={StyleSheet.absoluteFill}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                recyclingKey={item.id}
+                transition={150}
+              />
+            </Animated.View>
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.15)", "rgba(0,0,0,0.70)"]}
+              locations={[0, 0.5, 1]}
+              style={StyleSheet.absoluteFill}
+            />
 
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>Featured</Text>
-          </View>
-
-          <View style={styles.content}>
-            <View style={styles.textCol}>
-              <Text numberOfLines={1} style={styles.title}>
-                {item.title}
-              </Text>
-              <Text numberOfLines={1} style={styles.description}>
-                {item.description}
-              </Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>Featured</Text>
             </View>
 
-            <AnimatedPressable hitSlop={8} onPress={handlePress}>
-              <View style={styles.startButton}>
-                <Animated.View
-                  style={[styles.shimmerWrap, shimmerStyle]}
-                  pointerEvents="none"
-                >
-                  <LinearGradient
-                    colors={[
-                      "transparent",
-                      "rgba(255,255,255,0.55)",
-                      "transparent",
-                    ]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                  />
-                </Animated.View>
-
-                <Animated.View style={[styles.startIconChip]}>
-                  <Text style={styles.startButtonText}>Start</Text>
-                  <Animated.View style={chevronStyle}>
-                    <ChevronRightIcon color="#111318" size={15} />
-                  </Animated.View>
-                </Animated.View>
+            <View style={styles.content}>
+              <View style={styles.textCol}>
+                <Text numberOfLines={1} style={styles.title}>
+                  {item.title}
+                </Text>
+                <Text numberOfLines={1} style={styles.description}>
+                  {item.description}
+                </Text>
               </View>
-            </AnimatedPressable>
+
+              <AnimatedPressable hitSlop={8} onPress={handlePress}>
+                <View style={styles.startButton}>
+                  <Animated.View
+                    style={[styles.shimmerWrap, shimmerStyle]}
+                    pointerEvents="none"
+                  >
+                    <LinearGradient
+                      colors={[
+                        "transparent",
+                        "rgba(255,255,255,0.55)",
+                        "transparent",
+                      ]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={StyleSheet.absoluteFill}
+                    />
+                  </Animated.View>
+
+                  <Animated.View style={[styles.startIconChip]}>
+                    <Text style={styles.startButtonText}>Start</Text>
+                    <Animated.View style={chevronStyle}>
+                      <ChevronRightIcon color="#111318" size={15} />
+                    </Animated.View>
+                  </Animated.View>
+                </View>
+              </AnimatedPressable>
+            </View>
           </View>
         </AnimatedPressable>
       </Animated.View>
@@ -161,12 +176,14 @@ CategoryCard.displayName = "CategoryCard";
 
 export default CategoryCard;
 
+export const CARD_HEIGHT = 210;
+export const CARD_MARGIN_BOTTOM = 20;
+
 const styles = StyleSheet.create({
-  cardWrap: {
-    height: 210,
+  cardShadowWrap: {
+    height: CARD_HEIGHT,
     borderRadius: 22,
-    marginBottom: 20,
-    overflow: "hidden",
+    marginBottom: CARD_MARGIN_BOTTOM,
     backgroundColor: theme.colors.border,
     shadowColor: "#000",
     shadowOpacity: 0.18,
@@ -174,7 +191,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 0,
   },
-  image: { ...StyleSheet.absoluteFill },
+  cardClip: {
+    flex: 1,
+    borderRadius: 22,
+    overflow: "hidden",
+  },
   badge: {
     position: "absolute",
     top: 14,
@@ -216,7 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "500",
   },
-
   startButton: {
     width: BUTTON_WIDTH,
     height: 39,

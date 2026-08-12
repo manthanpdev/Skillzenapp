@@ -1,5 +1,6 @@
-import { useMemo } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+// CategoriesComp.tsx
+import { useCallback, useMemo } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { theme } from "../../utils/theme/Theme";
@@ -7,14 +8,18 @@ import { CategoriesCompProps, Category } from "../../utils/types/Apptypes";
 import { router } from "expo-router";
 import CategoryCard from "./CategoryCard";
 import { RootState } from "@/redux/store";
+
 const SECTION_ENTRY_DELAY = 0;
 
-const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
+const CategoriesComp = ({
+  searchQuery = "",
+  ismarginTop,
+}: CategoriesCompProps) => {
   const { categories } = useSelector((state: RootState) => state.global);
 
-  const handlePress = () => {
+  const handlePress = useCallback((_c?: Category) => {
     router.navigate("/(StackScreens)/TopickScreen");
-  };
+  }, []);
 
   const filteredCategories = useMemo(() => {
     if (!categories) return [];
@@ -36,7 +41,9 @@ const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
         searchQuery ? 0 : SECTION_ENTRY_DELAY,
       ).duration(300)}
     >
-      <Text style={styles.heading}>Categories</Text>
+      <Text style={[styles.heading, { marginTop: ismarginTop ? 12 : 0 }]}>
+        Categories
+      </Text>
 
       {isEmpty ? (
         <Animated.View
@@ -49,13 +56,7 @@ const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
           </Text>
         </Animated.View>
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.ScrollCOntainer}
-          scrollEventThrottle={30}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="handled"
-        >
+        <View style={styles.listContainer}>
           {filteredCategories.map((cat: Category, i: number) => (
             <CategoryCard
               key={cat.id}
@@ -64,7 +65,7 @@ const CategoriesComp = ({ searchQuery = "" }: CategoriesCompProps) => {
               onPress={handlePress}
             />
           ))}
-        </ScrollView>
+        </View>
       )}
     </Animated.View>
   );
@@ -78,13 +79,9 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.title,
     fontWeight: "800",
     letterSpacing: -0.5,
-    marginBottom: 10,
-    marginTop: 5,
-    //manthan
+    marginBottom: 20,
   },
-  ScrollCOntainer: {
-    paddingBottom: 950,
-  },
+  listContainer: {},
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",

@@ -10,6 +10,7 @@ import {
   QuestionIcon,
 } from "../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const lessons = [
   {
@@ -102,7 +103,7 @@ const LessonComp = () => {
   const isLastLesson = currentLessonIndex === lessons.length - 1;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* ---------------- Header ---------------- */}
 
       <View style={styles.header}>
@@ -232,7 +233,7 @@ const LessonComp = () => {
           textColor={theme.colors.black}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -5,7 +5,8 @@ import {
   signInWithCredential,
   updateProfile,
   signInWithEmailAndPassword,
-  User
+  User,
+  signOut
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
@@ -72,18 +73,16 @@ export const loginUser = async (
   return userCredential.user;
 };
 
-// ================================
+
 // Google Sign-In Configuration
-// ================================
 
 GoogleSignin.configure({
   webClientId:
     "92988697490-m4t3vvo422m001hgtj8p61gph63588tu.apps.googleusercontent.com",
 });
 
-// ================================
+
 // Google Sign-In
-// ================================
 
 export const signInWithGoogle = async () => {
   await GoogleSignin.hasPlayServices();
@@ -119,3 +118,18 @@ export const signInWithGoogle = async () => {
   );
   return user;
 };
+
+
+// user Logout
+
+export const logOutCurrentUser = async () => {
+  try {
+    const isUserLOgin = await GoogleSignin.getCurrentUser()
+    if (isUserLOgin) {
+      await GoogleSignin.signOut()
+    }
+  } catch (error) {
+    console.log("signOut Fail", error);
+  }
+  return signOut(auth)
+}

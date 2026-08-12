@@ -28,6 +28,7 @@ const LoginComponent = () => {
   const [email, setemail] = useState("");
   const [errors, setErrors] = useState<LoginErrorsProps>({});
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: LoginErrorsProps = {};
@@ -92,9 +93,11 @@ const LoginComponent = () => {
   };
 
   const handleSignIn = async () => {
+    if (isSigningIn) return;
     if (!validate()) {
       return;
     }
+    setIsSigningIn(true);
     try {
       const user = await loginUser(email.trim().toLowerCase(), password);
       dispatch(setUser(toAppUser(user)));
@@ -123,9 +126,10 @@ const LoginComponent = () => {
           break;
       }
       Alert.alert("Login failed", message);
+    } finally {
+      setIsSigningIn(false);
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -156,7 +160,7 @@ const LoginComponent = () => {
           onChangeText={handlePasswordChange}
           error={errors.password}
         />
-        <View style={styles.forgotePassword}>
+        {/* <View style={styles.forgotePassword}>
           <AppButton
             backgroundColor="#ffffff00"
             title="Forgot Password ?"
@@ -166,9 +170,11 @@ const LoginComponent = () => {
             style={styles.forgotePassword}
             height={20}
           />
-        </View>
+        </View> */}
         <AppButton
           title="Sign In"
+          loadingTitle="Signing in..."
+          loading={isSigningIn}
           height={46}
           fontSize={15}
           onPress={handleSignIn}
@@ -180,25 +186,20 @@ const LoginComponent = () => {
         </View>
         <View style={styles.box2}>
           <AppButton
+            title="Continue with google"
+            loadingTitle="Signing in..."
+            loading={isGoogleLoading}
             height={46}
-            icon={
-              isGoogleLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.text} />
-              ) : (
-                <GoogleIcon />
-              )
-            }
-            iconPosition="left"
             backgroundColor={theme.colors.surface}
             borderwidth={1}
             bordercolor={theme.colors.border}
-            title={isGoogleLoading ? "Signing in..." : "Continue with google"}
             textColor={theme.colors.text}
             fontweight="600"
             fontSize={14}
             borderRadius={10}
+            icon={<GoogleIcon />}
+            iconPosition="left"
             onPress={handleGoogleSignIn}
-            disabled={isGoogleLoading}
           />
         </View>
         <View style={styles.box3}>

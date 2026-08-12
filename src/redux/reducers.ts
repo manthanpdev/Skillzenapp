@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { fetchCategories, fetchTopics, fetchLessons } from "./actions";
+import { fetchCategories, fetchTopics, fetchLessons, logOutUser } from "./actions";
 
 import { GlobalState, UserData } from "../utils/types/Apptypes";
 
@@ -35,10 +35,10 @@ const globalSlice = createSlice({
       state.isAuthResolved = true;
     },
 
-    clearUser: (state) => {
-      state.currentUser = null;
-      state.isAuthResolved = true;
-    },
+    // clearUser: (state) => {
+    //   state.currentUser = null;
+    //   state.isAuthResolved = true;
+    // },
   },
 
   extraReducers: (builder) => {
@@ -68,9 +68,20 @@ const globalSlice = createSlice({
       state.lessons = action.payload;
       state.isLoading = false;
     });
+
+    // logout Current User
+
+    builder.addCase(logOutUser.fulfilled, (state) => {
+      state.currentUser = null
+      state.isAuthResolved = true
+    })
+
+    builder.addCase(logOutUser.rejected, (state, action) => {
+      state.error = action.error.message || "Unable to logout";
+    })
   },
 });
 
-export const { clearError, clearUser, setUser } = globalSlice.actions;
+export const { clearError, setUser } = globalSlice.actions;
 
 export default globalSlice.reducer;

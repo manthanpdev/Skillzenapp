@@ -3,6 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 
 import { Category, Topic, Lesson } from "../utils/types/Apptypes";
+import { logOutCurrentUser } from "@/services/authService";
 
 export const fetchCategories = createAsyncThunk(
   "categories/fetch",
@@ -33,3 +34,8 @@ export const fetchLessons = createAsyncThunk("lessons/fetch", async () => {
     ...doc.data(),
   })) as Lesson[];
 });
+
+
+export const logOutUser = createAsyncThunk("user/logout", async () => {
+  await logOutCurrentUser()
+})

@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   containerFocused: {
     borderColor: theme.colors.primary,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   input: {
     flex: 1,

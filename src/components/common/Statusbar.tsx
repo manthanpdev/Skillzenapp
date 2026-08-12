@@ -12,7 +12,7 @@ const StatusBarComponent = () => {
         translucent
         barStyle={"default"}
       />
-      <View style={{ height: insets.top, backgroundColor: "#0B1020" }} />
+      {/* <View style={{ height: insets.top, backgroundColor: "#0B1020" }} /> */}
     </>
   );
 };

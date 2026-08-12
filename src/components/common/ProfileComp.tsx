@@ -8,9 +8,7 @@ import {
   View,
 } from "react-native";
 import { useState } from "react";
- 
 
- 
 import { theme } from "@/utils/theme/Theme";
 import type { ProfileCompProps } from "@/utils/types/Apptypes";
 import {
@@ -27,7 +25,7 @@ import {
   DeleteIcon,
 } from "../../assets/Svg/SvgIcons";
 import AppButton from "../ReusableComp/AppButton";
- 
+
 const ProfileComp = ({
   currentUser,
   isPhotoModalVisible,
@@ -37,14 +35,14 @@ const ProfileComp = ({
   onSelectFromGallery,
   onDeletePhoto,
   onLogout,
+  isLoggingOut,
 }: ProfileCompProps) => {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const firstLetter = currentUser.fullName?.charAt(0).toUpperCase() || "U";
- 
- 
+
   const renderProfileImage = (size: number, style?: object) => {
     const profilePhoto = currentUser.photo || currentUser.googlePhoto;
- 
+
     if (profilePhoto) {
       return (
         <Image
@@ -60,7 +58,7 @@ const ProfileComp = ({
         />
       );
     }
- 
+
     return (
       <View
         style={[
@@ -77,7 +75,7 @@ const ProfileComp = ({
       </View>
     );
   };
- 
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -87,7 +85,7 @@ const ProfileComp = ({
         <View style={styles.profileContainer}>
           <View style={styles.imageContainer}>
             {renderProfileImage(98, styles.profileImage)}
- 
+
             <Pressable
               style={styles.editButton}
               onPress={onOpenPhotoModal}
@@ -96,38 +94,37 @@ const ProfileComp = ({
               <PencilIcon size={20} color={theme.colors.primary} />
             </Pressable>
           </View>
- 
+
           <View style={styles.userDetails}>
             <Text style={styles.userName}>{currentUser.fullName}</Text>
- 
+
             <Text style={styles.userEmail} numberOfLines={2}>
               {currentUser.email}
             </Text>
- 
           </View>
         </View>
- 
+
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Lessons</Text>
             <Text style={styles.statValue}>0</Text>
           </View>
- 
+
           <View style={styles.statDivider} />
- 
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Tasks</Text>
             <Text style={styles.statValue}>0</Text>
           </View>
- 
+
           <View style={styles.statDivider} />
- 
+
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Quizzes</Text>
             <Text style={styles.statValue}>0</Text>
           </View>
         </View>
- 
+
         <View style={styles.menuContainer}>
           <Pressable
             style={({ pressed }) => [
@@ -139,9 +136,9 @@ const ProfileComp = ({
             <Text style={styles.menuText}>Achievements</Text>
             <ChevronRightIcon color={theme.colors.text} />
           </Pressable>
- 
+
           <View style={styles.divider} />
- 
+
           <Pressable
             style={({ pressed }) => [
               styles.menuItem,
@@ -149,14 +146,14 @@ const ProfileComp = ({
             ]}
           >
             <BookmarkIcon />
- 
+
             <Text style={styles.menuText}>Bookmarks</Text>
- 
+
             <ChevronRightIcon color={theme.colors.text} />
           </Pressable>
- 
+
           <View style={styles.divider} />
- 
+
           <Pressable
             style={({ pressed }) => [
               styles.menuItem,
@@ -168,7 +165,7 @@ const ProfileComp = ({
             <ChevronRightIcon color={theme.colors.text} />
           </Pressable>
         </View>
- 
+
         <View style={styles.menuContainer}>
           <Pressable
             style={({ pressed }) => [
@@ -180,9 +177,9 @@ const ProfileComp = ({
             <Text style={styles.menuText}>Settings</Text>
             <ChevronRightIcon color={theme.colors.text} />
           </Pressable>
- 
+
           <View style={styles.divider} />
- 
+
           <Pressable
             style={({ pressed }) => [
               styles.menuItem,
@@ -194,7 +191,7 @@ const ProfileComp = ({
             <ChevronRightIcon color={theme.colors.text} />
           </Pressable>
         </View>
- 
+
         <AppButton
           title="Logout"
           icon={<LogoutIcon />}
@@ -211,7 +208,7 @@ const ProfileComp = ({
           style={styles.logoutButton}
         />
       </ScrollView>
- 
+
       <Modal
         visible={isPhotoModalVisible}
         transparent
@@ -221,12 +218,12 @@ const ProfileComp = ({
         <Pressable style={styles.modalBackground} onPress={onClosePhotoModal}>
           <Pressable style={styles.modalContent} onPress={() => {}}>
             <View style={styles.modalHandle} />
- 
+
             <View style={styles.modalHeader}>
               <View style={styles.modalHeaderSpace} />
- 
+
               <Text style={styles.modalTitle}>Change Profile Photo</Text>
- 
+
               <Pressable
                 style={styles.closeButton}
                 onPress={onClosePhotoModal}
@@ -235,34 +232,34 @@ const ProfileComp = ({
                 <Text style={styles.closeText}>×</Text>
               </Pressable>
             </View>
- 
+
             <View style={styles.modalImageContainer}>
               {renderProfileImage(112, styles.modalProfileImage)}
             </View>
- 
+
             <View style={styles.photoButtonsContainer}>
               <Pressable style={styles.photoOptionButton} onPress={onTakePhoto}>
                 <CameraIcon />
- 
+
                 <Text style={styles.photoOptionText}>Take Photo</Text>
               </Pressable>
- 
+
               <Pressable
                 style={styles.photoOptionButton}
                 onPress={onSelectFromGallery}
               >
                 <GalleryIcon />
- 
+
                 <Text style={styles.photoOptionText}>Select from Gallery</Text>
               </Pressable>
             </View>
- 
+
             <Pressable style={styles.deleteButton} onPress={onDeletePhoto}>
               <DeleteIcon />
- 
+
               <Text style={styles.deleteButtonText}>Delete Photo</Text>
             </Pressable>
- 
+
             <AppButton
               title="Cancel"
               height={52}
@@ -287,13 +284,13 @@ const ProfileComp = ({
         <View style={styles.confirmOverlay}>
           <View style={styles.confirmContainer}>
             <LogoutIcon />
- 
+
             <Text style={styles.confirmTitle}>Logout?</Text>
- 
+
             <Text style={styles.confirmMessage}>
               Are you sure you want to logout from your account?
             </Text>
- 
+
             <View style={styles.confirmButtons}>
               <AppButton
                 title="Cancel"
@@ -306,7 +303,7 @@ const ProfileComp = ({
                 bordercolor={theme.colors.border}
                 onPress={() => setIsLogoutModalVisible(false)}
               />
- 
+
               <AppButton
                 title="Logout"
                 width="48%"
@@ -318,6 +315,8 @@ const ProfileComp = ({
                   setIsLogoutModalVisible(false);
                   onLogout();
                 }}
+                loading={isLoggingOut}
+                loadingTitle="Logging out..."
               />
             </View>
           </View>
@@ -326,51 +325,51 @@ const ProfileComp = ({
     </View>
   );
 };
- 
+
 export default ProfileComp;
- 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
   },
- 
+
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop:30,
+    paddingTop: 30,
     paddingBottom: 30,
   },
- 
+
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 4,
     marginBottom: 22,
   },
- 
+
   imageContainer: {
     width: 98,
     height: 98,
     position: "relative",
   },
- 
+
   profileImage: {
     borderWidth: 3,
     borderColor: "#C8FF00",
   },
- 
+
   defaultImage: {
     backgroundColor: theme.colors.card,
     alignItems: "center",
     justifyContent: "center",
   },
- 
+
   defaultImageText: {
     color: theme.colors.text,
     fontSize: 38,
     fontWeight: "800",
   },
- 
+
   editButton: {
     position: "absolute",
     right: 0,
@@ -384,24 +383,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
- 
+
   userDetails: {
     flex: 1,
     marginLeft: 16,
   },
- 
+
   userName: {
     color: theme.colors.text,
     fontSize: 22,
     fontWeight: "800",
   },
- 
+
   userEmail: {
     color: theme.colors.muted,
     fontSize: 14,
     marginTop: 5,
   },
- 
+
   badge: {
     alignSelf: "flex-start",
     marginTop: 11,
@@ -410,13 +409,13 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     backgroundColor: "#2D176A",
   },
- 
+
   badgeText: {
     color: theme.colors.text,
     fontSize: 13,
     fontWeight: "700",
   },
- 
+
   statsContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -427,30 +426,30 @@ const styles = StyleSheet.create({
     paddingVertical: 17,
     marginBottom: 14,
   },
- 
+
   statItem: {
     flex: 1,
     alignItems: "center",
   },
- 
+
   statLabel: {
     color: theme.colors.muted,
     fontSize: 12,
     marginBottom: 6,
   },
- 
+
   statValue: {
     color: theme.colors.text,
     fontSize: 24,
     fontWeight: "800",
   },
- 
+
   statDivider: {
     width: 1,
     height: 35,
     backgroundColor: theme.colors.divider,
   },
- 
+
   menuContainer: {
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
@@ -459,19 +458,19 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 12,
   },
- 
+
   menuItem: {
     minHeight: 60,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
   },
- 
+
   menuItemPressed: {
     opacity: 0.6,
     backgroundColor: theme.colors.card,
   },
- 
+
   menuText: {
     flex: 1,
     color: theme.colors.text,
@@ -479,24 +478,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 12,
   },
- 
+
   divider: {
     height: 1,
     marginLeft: 51,
     backgroundColor: theme.colors.divider,
   },
- 
+
   logoutButton: {
     justifyContent: "flex-start",
     paddingHorizontal: 16,
   },
- 
+
   modalBackground: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(1, 7, 18, 0.76)",
   },
- 
+
   modalContent: {
     backgroundColor: theme.colors.surface,
     borderTopLeftRadius: 26,
@@ -505,7 +504,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 22,
   },
- 
+
   modalHandle: {
     width: 52,
     height: 5,
@@ -515,17 +514,17 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     marginBottom: 16,
   },
- 
+
   modalHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 18,
   },
- 
+
   modalHeaderSpace: {
     width: 34,
   },
- 
+
   modalTitle: {
     flex: 1,
     color: theme.colors.text,
@@ -533,36 +532,36 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
   },
- 
+
   closeButton: {
     width: 34,
     height: 34,
     alignItems: "center",
     justifyContent: "center",
   },
- 
+
   closeText: {
     color: theme.colors.text,
     fontSize: 28,
     lineHeight: 30,
   },
- 
+
   modalImageContainer: {
     alignItems: "center",
     marginBottom: 20,
   },
- 
+
   modalProfileImage: {
     borderWidth: 2,
     borderColor: theme.colors.primary,
   },
- 
+
   photoButtonsContainer: {
     flexDirection: "row",
     gap: 10,
     marginBottom: 12,
   },
- 
+
   photoOptionButton: {
     flex: 1,
     minHeight: 96,
@@ -574,7 +573,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 8,
   },
- 
+
   photoOptionText: {
     color: theme.colors.text,
     fontSize: 14,
@@ -582,7 +581,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
   },
- 
+
   deleteButton: {
     height: 52,
     flexDirection: "row",
@@ -594,7 +593,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.card,
     marginBottom: 12,
   },
- 
+
   deleteButtonText: {
     color: "#FF4D67",
     fontSize: 15,
@@ -608,7 +607,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     paddingHorizontal: 24,
   },
- 
+
   confirmContainer: {
     width: "100%",
     backgroundColor: theme.colors.surface,
@@ -618,14 +617,14 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: "center",
   },
- 
+
   confirmTitle: {
     color: theme.colors.text,
     fontSize: 22,
     fontWeight: "800",
     marginTop: 16,
   },
- 
+
   confirmMessage: {
     color: theme.colors.muted,
     fontSize: 15,
@@ -634,12 +633,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 24,
   },
- 
+
   confirmButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
   },
 });
- 
- 

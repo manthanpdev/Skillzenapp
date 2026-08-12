@@ -26,7 +26,7 @@ const getDummyProgress = (index: number) => {
 
 const TopickComp = () => {
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
         <AppButton
           icon={<BackIcon color={theme.colors.text} />}
@@ -101,7 +101,7 @@ const TopickComp = () => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

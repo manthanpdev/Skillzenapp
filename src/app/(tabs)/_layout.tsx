@@ -1,11 +1,11 @@
-
 import { tabConfig } from "@/utils/constants/tabConfig";
 import { theme } from "@/utils/theme/Theme";
 import { Tabs } from "expo-router";
-
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
+  const insert = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -15,7 +15,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.colors.background,
           borderTopWidth: 0,
-
+          height: 60 + insert.bottom,
+          paddingTop: 5,
           // iOS shadow
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -39,7 +40,9 @@ export default function TabLayout() {
           name={name}
           options={{
             title,
-            tabBarIcon: ({ color, size }) => <Icon color={color as string} size={size} />,
+            tabBarIcon: ({ color, size }) => (
+              <Icon color={color as string} size={size} />
+            ),
           }}
         />
       ))}

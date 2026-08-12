@@ -15,8 +15,11 @@ import { setUser } from "@/redux/reducers";
 const RegistrationScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
   const handleRegister = async (values: RegistrationFormValues) => {
+    if (isRegisterLoading) return;
+    setIsRegisterLoading(true);
     try {
       const user = await registerUser(
         values.fullName,
@@ -27,28 +30,24 @@ const RegistrationScreen = () => {
       router.replace("/(tabs)");
     } catch (error: any) {
       console.log("Registration error:", error);
-
       let message = "Unable to create your account.";
-
       switch (error?.code) {
         case "auth/email-already-in-use":
           message = "An account already exists with this email.";
           break;
-
         case "auth/invalid-email":
           message = "Please enter a valid email address.";
           break;
-
         case "auth/weak-password":
           message = "Password is too weak.";
           break;
-
         case "auth/network-request-failed":
           message = "Please check your internet connection.";
           break;
       }
-
       Alert.alert("Registration failed", message);
+    } finally {
+      setIsRegisterLoading(false); // NEW
     }
   };
 
@@ -85,6 +84,7 @@ const RegistrationScreen = () => {
       onLoginPress={handleLoginPress}
       onGooglePress={handleGooglePress}
       isGoogleLoading={isGoogleLoading}
+      isRegisterLoading={isRegisterLoading} 
     />
   );
 };
