@@ -104,10 +104,16 @@ export type BenefitVisualType =
   | "focus";
 
 export type TopicProgress = {
-  categoryTitle: string;
-  topicId: string;
-  lastLessonIndex: number;
-  completed: boolean;
+  topicId?: string;
+  topicTitle?: string;
+  categoryId?: string;
+  categoryTitle?: string;
+  totalLessons?: number;
+  lastLessonIndex?: number;
+  completed?: boolean;
+  startedAt?: any;      // Firestore Timestamp (or FieldValue on write)
+  updatedAt?: any;
+  completedAt?: any | null;
 };
 
 export type UserData = {

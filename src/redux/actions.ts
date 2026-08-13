@@ -51,5 +51,5 @@ export const fetchLessonsByTopic = createAsyncThunk(
 );
 
 export const logOutUser = createAsyncThunk("user/logout", async () => {
-  await logOutCurrentUser();
-});
+  await logOutCurrentUser()
+})

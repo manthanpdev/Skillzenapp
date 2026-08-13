@@ -10,7 +10,7 @@ export const loadData = async (key: string) => {
 
     return null;
   }
-};
+}; 
 
 export const StoreData = async (key: string, data: any) => {
   try {
