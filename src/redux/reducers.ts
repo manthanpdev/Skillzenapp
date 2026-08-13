@@ -31,9 +31,7 @@ const initialState: GlobalState = {
 
 const globalSlice = createSlice({
   name: "global",
-
   initialState,
-
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -56,6 +54,7 @@ const globalSlice = createSlice({
     setSelectedTopic: (state, action: PayloadAction<string>) => {
       state.selectedTopicId = action.payload;
     },
+
     updateTopicProgress: (state, action: PayloadAction<TopicProgress>) => {
       if (!state.currentUser) {
         return;

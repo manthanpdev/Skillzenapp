@@ -10,9 +10,7 @@ import {
 } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import { useDispatch, useSelector } from "react-redux";
-
 import { BackIcon, CheckIcon, TopicIcon } from "../../assets/Svg/SvgIcons";
-
 import { AppDispatch, RootState } from "@/redux/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppButton from "../ReusableComp/AppButton";
@@ -45,7 +43,7 @@ const TopickComp = () => {
         completed: false,
       };
     }
-    const topicProgress = currentUser?.userData?.find(
+    const topicProgress: any = currentUser?.userData?.find(
       (progress) => progress.topicId === topicId,
     );
 
@@ -83,7 +81,6 @@ const TopickComp = () => {
           borderRadius={theme.radius.sm}
           style={styles.backButton}
           hitSlop={10}
-  
         />
 
         <Text style={styles.headerTitle}>{category?.title ?? "Topics"}</Text>
@@ -163,7 +160,7 @@ const TopickComp = () => {
                     {item.title}
                   </Text>
 
-                  <Text style={styles.meta}>Topic {item.order}</Text>
+                  <Text style={styles.meta}>{item.totalLessons} Lessons </Text>
                 </View>
 
                 <View style={styles.progressWrap}>
@@ -215,7 +212,6 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: 10,
   },
-
 
   headerTitle: {
     color: theme.colors.text,

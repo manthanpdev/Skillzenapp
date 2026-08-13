@@ -20,4 +20,4 @@ export const DUMMY_TOPICS = [
   { id: "rn-cli-native-modules", title: "Native Modules", totalLessons: 6 },
   { id: "rn-cli-build-release", title: "Build & Release", totalLessons: 8 },
   { id: "rn-cli-best-practices", title: "Best Practices", totalLessons: 6 },
-];
+]

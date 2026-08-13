@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 import Animated, {
   FadeIn,
   useAnimatedScrollHandler,
@@ -7,16 +7,13 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
-  FadeOut,
 } from "react-native-reanimated";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/redux/store";
-import { fetchCategories } from "@/redux/actions";
 import HomeScreenHeaderComp from "./HomeScreenHeadercomp";
 import CustomeSearch from "../ReusableComp/CustomeSearch";
 import BenefitsSection from "./BenefitsSection";
 import CategoriesComp from "./CatogeriesComp";
 import { ContinueLearningComp } from "./ContinueLearningCompTwo";
+
 
 const HomeComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,6 +66,9 @@ const HomeComponent = () => {
     setSearchQuery("");
     setIsSearchFocused(false);
   }, []);
+
+
+
   return (
     <Animated.ScrollView
       style={styles.container}
