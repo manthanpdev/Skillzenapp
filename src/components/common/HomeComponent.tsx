@@ -68,7 +68,6 @@ const HomeComponent = () => {
   }, []);
 
 
-
   return (
     <Animated.ScrollView
       style={styles.container}
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   contentContainer: {
     paddingHorizontal: 15,
     // paddingBottom: 24,
@@ -121,4 +121,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
 });
