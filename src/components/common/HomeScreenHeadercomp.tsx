@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 // import { RootState } from "@/redux/store";
 
+
 const HomeScreenHeaderComp = () => {
   const { currentUser } = useSelector((state: RootState) => state.global);
 

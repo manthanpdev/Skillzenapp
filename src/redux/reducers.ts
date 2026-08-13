@@ -119,7 +119,6 @@ const globalSlice = createSlice({
         state.error = action.error.message || "Unable to fetch lessons";
       });
       
-
     // logout Current User
     builder.addCase(logOutUser.fulfilled, (state) => {
       state.currentUser = null
