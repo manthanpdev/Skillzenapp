@@ -52,7 +52,7 @@ export type AppButtonProp = {
   textStyle?: StyleProp<TextStyle>;
   fontweight?: TextStyle["fontWeight"];
   hitSlop?: number;
-  showTitle?: boolean
+  showTitle?: boolean;
 };
 
 export type CustomTextInputProps = TextInputProps & {
@@ -60,6 +60,7 @@ export type CustomTextInputProps = TextInputProps & {
   error?: string;
   helperText?: string;
   leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
   isPassword?: boolean;
   inputContainerStyle?: StyleProp<ViewStyle>;
@@ -82,7 +83,7 @@ export type RegistrationCompProps = {
   onLoginPress?: () => void;
   onGooglePress?: () => void;
   isGoogleLoading?: any;
-  isRegisterLoading?: any,
+  isRegisterLoading?: any;
 };
 
 export type LoginFormValues = {
@@ -132,7 +133,7 @@ export type ProfileCompProps = {
   onSelectFromGallery: () => void;
   onDeletePhoto: () => void;
   onLogout: () => void;
-  isLoggingOut?: boolean,
+  isLoggingOut?: boolean;
 };
 
 export type TopicListItem = {
@@ -267,7 +268,7 @@ export type SearchBarProps = {
 
 export type CategoriesCompProps = {
   searchQuery?: string;
-  ismarginTop?: boolean
+  ismarginTop?: boolean;
 };
 
 export type AIContext = {
@@ -288,7 +289,6 @@ export type ContinueLearningCardProps = {
   onResume: () => void;
 };
 
-
 type IndicatorSize = "small" | "large";
 
 export type AppActivityIndicatorProps = {
@@ -296,4 +296,4 @@ export type AppActivityIndicatorProps = {
   color?: string;
   fullscreen?: boolean;
   style?: ViewStyle;
-}
+};
