@@ -1,8 +1,8 @@
 import { theme } from "../../utils/theme/Theme";
 import type { GetStartedIconProps } from "../../utils/types/Apptypes";
- 
+
 import Svg, { Circle, Line, Path, Polyline, Rect } from "react-native-svg";
- 
+
 export function AppLogo(props: any) {
   return (
     <Svg
@@ -31,7 +31,7 @@ export function AppLogo(props: any) {
     </Svg>
   );
 }
- 
+
 export function PasswordshowIcon({ color = "#94A3B8", ...props }: any) {
   return (
     <Svg
@@ -61,7 +61,7 @@ export function PasswordshowIcon({ color = "#94A3B8", ...props }: any) {
     </Svg>
   );
 }
- 
+
 export function PasswordHideIcon(props: any) {
   return (
     <Svg
@@ -91,61 +91,61 @@ const getStrokeProps = (color: string, strokeWidth = 1.8) => ({
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
 });
- 
+
 // Learn by building icon
 export const BuildIcon = ({ size = 22, color }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M14.5 5.5L18.5 9.5L9 19H5V15L14.5 5.5Z" {...strokeProps} />
- 
+
       <Line x1="12.5" y1="7.5" x2="16.5" y2="11.5" {...strokeProps} />
- 
+
       <Line x1="5" y1="19" x2="10" y2="19" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 // Track progress icon
 export const ProgressIcon = ({ size = 22, color }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Polyline points="3,17 9,11 13,15 21,7" {...strokeProps} />
- 
+
       <Polyline points="15,7 21,7 21,13" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 // Level up skills icon
 export const SkillsIcon = ({ size = 22, color }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Rect x="4" y="13" width="3.5" height="7" rx="1" {...strokeProps} />
- 
+
       <Rect x="10.25" y="9" width="3.5" height="11" rx="1" {...strokeProps} />
- 
+
       <Rect x="16.5" y="4" width="3.5" height="16" rx="1" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 // Lessons icon
 export const LessonsIcon = ({ size = 22, color }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M4 5.5C6.8 4.5 9.4 5 12 7V20C9.4 18 6.8 17.5 4 18.5V5.5Z"
         {...strokeProps}
       />
- 
+
       <Path
         d="M20 5.5C17.2 4.5 14.6 5 12 7V20C14.6 18 17.2 17.5 20 18.5V5.5Z"
         {...strokeProps}
@@ -153,31 +153,31 @@ export const LessonsIcon = ({ size = 22, color }: GetStartedIconProps) => {
     </Svg>
   );
 };
- 
+
 // Growth icon
 export const GrowthIcon = ({ size = 22, color }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M8 4H16V8C16 11 14.2 13 12 13C9.8 13 8 11 8 8V4Z"
         {...strokeProps}
       />
- 
+
       <Path d="M8 6H5V8C5 10 6.3 11.5 8.2 11.8" {...strokeProps} />
- 
+
       <Path d="M16 6H19V8C19 10 17.7 11.5 15.8 11.8" {...strokeProps} />
- 
+
       <Line x1="12" y1="13" x2="12" y2="17" {...strokeProps} />
- 
+
       <Line x1="9" y1="20" x2="15" y2="20" {...strokeProps} />
- 
+
       <Path d="M10 17H14V20H10V17Z" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 // Next button arrow
 export const ArrowIcon = ({
   size = 22,
@@ -185,16 +185,16 @@ export const ArrowIcon = ({
   strokeWidth = 3,
 }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color, strokeWidth);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Line x1="4" y1="12" x2="20" y2="12" {...strokeProps} />
- 
+
       <Polyline points="14,6 20,12 14,18" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 // Get Started rocket icon
 export const RocketIcon = ({
   size = 22,
@@ -202,25 +202,25 @@ export const RocketIcon = ({
   strokeWidth = 2,
 }: GetStartedIconProps) => {
   const strokeProps = getStrokeProps(color, strokeWidth);
- 
+
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M14 4C17 2.5 20 3 21 3C21 4 21.5 7 20 10L14 16L8 10L14 4Z"
         {...strokeProps}
       />
- 
+
       <Circle cx="16.5" cy="7.5" r="1.5" {...strokeProps} />
- 
+
       <Path d="M8 10L5 11L3 14L9 15" {...strokeProps} />
- 
+
       <Path d="M14 16L13 19L10 21L9 15" {...strokeProps} />
- 
+
       <Path d="M7 17C5 18 4 20 4 20C4 20 6 19 7 17Z" {...strokeProps} />
     </Svg>
   );
 };
- 
+
 export function GoogleIcon(props: any) {
   return (
     <Svg
@@ -250,7 +250,7 @@ export function GoogleIcon(props: any) {
     </Svg>
   );
 }
- 
+
 // Home icon - simple house outline
 export const HomeIcon = ({
   size = 24,
@@ -266,7 +266,7 @@ export const HomeIcon = ({
     />
   </Svg>
 );
- 
+
 // Topics icon - open book outline
 export const TopicsIcon = ({
   size = 24,
@@ -290,7 +290,7 @@ export const TopicsIcon = ({
     />
   </Svg>
 );
- 
+
 // Tasks icon - checkmark
 export const TasksIcon = ({
   size = 24,
@@ -307,7 +307,7 @@ export const TasksIcon = ({
     />
   </Svg>
 );
- 
+
 // AI Chat Icon
 export const AIChatIcon = ({
   size = 24,
@@ -323,7 +323,7 @@ export const AIChatIcon = ({
       strokeLinecap="round"
       strokeLinejoin="round"
     />
- 
+
     {/* AI Sparkle */}
     <Path
       d="M15.5 7.5L16 9L17.5 9.5L16 10L15.5 11.5L15 10L13.5 9.5L15 9L15.5 7.5Z"
@@ -332,7 +332,7 @@ export const AIChatIcon = ({
       strokeLinecap="round"
       strokeLinejoin="round"
     />
- 
+
     {/* Message Lines */}
     <Path
       d="M7.5 9.5H11"
@@ -348,7 +348,7 @@ export const AIChatIcon = ({
     />
   </Svg>
 );
- 
+
 // Profile icon - person outline
 export const ProfileIcon = ({
   size = 24,
@@ -365,7 +365,7 @@ export const ProfileIcon = ({
     />
   </Svg>
 );
- 
+
 export const NotificationIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -388,7 +388,7 @@ export const NotificationIcon = ({
     />
   </Svg>
 );
- 
+
 export const HiIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -425,7 +425,7 @@ export const HiIcon = ({
     />
   </Svg>
 );
- 
+
 export const CertificateIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -442,7 +442,7 @@ export const CertificateIcon = ({
     />
   </Svg>
 );
- 
+
 export const CartGrowthIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -465,7 +465,7 @@ export const CartGrowthIcon = ({
     />
   </Svg>
 );
- 
+
 export const ClockIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -482,7 +482,7 @@ export const ClockIcon = ({
     />
   </Svg>
 );
- 
+
 export const TeacherIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -505,7 +505,7 @@ export const TeacherIcon = ({
     />
   </Svg>
 );
- 
+
 export const CommunityIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -528,7 +528,7 @@ export const CommunityIcon = ({
     />
   </Svg>
 );
- 
+
 export const TargetIcon = ({
   size = 24,
   color = "#8E8E93",
@@ -540,7 +540,7 @@ export const TargetIcon = ({
     <Circle cx="12" cy="12" r="1" fill={color} />
   </Svg>
 );
- 
+
 export const PencilIcon = ({
   color = "#FFFFFF",
   size = 18,
@@ -557,7 +557,7 @@ export const PencilIcon = ({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
- 
+
       <Path
         d="M13.5 6.5L17.5 10.5"
         stroke={color}
@@ -567,7 +567,7 @@ export const PencilIcon = ({
     </Svg>
   );
 };
- 
+
 export const LogoutIcon = ({
   color = "#FF4D67",
   size = 24,
@@ -583,7 +583,7 @@ export const LogoutIcon = ({
         strokeWidth={2}
         strokeLinecap="round"
       />
- 
+
       <Path
         d="M13 8L17 12L13 16"
         stroke={color}
@@ -591,12 +591,12 @@ export const LogoutIcon = ({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
- 
+
       <Path d="M8 12H17" stroke={color} strokeWidth={2} strokeLinecap="round" />
     </Svg>
   );
 };
- 
+
 export const CameraIcon = ({
   color = "#D7FF3F",
   size = 28,
@@ -612,12 +612,12 @@ export const CameraIcon = ({
         strokeWidth={2}
         strokeLinejoin="round"
       />
- 
+
       <Circle cx={12} cy={13} r={3.5} stroke={color} strokeWidth={2} />
     </Svg>
   );
 };
- 
+
 export const GalleryIcon = ({
   color = "#D7FF3F",
   size = 28,
@@ -636,9 +636,9 @@ export const GalleryIcon = ({
         stroke={color}
         strokeWidth={2}
       />
- 
+
       <Circle cx={9} cy={9} r={1.5} fill={color} />
- 
+
       <Path
         d="M5 18L10 13L13 16L15 14L19 18"
         stroke={color}
@@ -648,7 +648,7 @@ export const GalleryIcon = ({
     </Svg>
   );
 };
- 
+
 export const DeleteIcon = ({
   color = "#FF4D67",
   size = 22,
@@ -659,21 +659,21 @@ export const DeleteIcon = ({
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M4 7H20" stroke={color} strokeWidth={2} strokeLinecap="round" />
- 
+
       <Path
         d="M9 7V4H15V7"
         stroke={color}
         strokeWidth={2}
         strokeLinejoin="round"
       />
- 
+
       <Path
         d="M6 7L7 21H17L18 7"
         stroke={color}
         strokeWidth={2}
         strokeLinejoin="round"
       />
- 
+
       <Path
         d="M9 10V17M12 10V17M15 10V17"
         stroke={color}
@@ -683,7 +683,7 @@ export const DeleteIcon = ({
     </Svg>
   );
 };
- 
+
 export const ChevronRightIcon = ({
   color = "#94A3B8",
   size = 20,
@@ -701,7 +701,7 @@ export const ChevronRightIcon = ({
     </Svg>
   );
 };
- 
+
 export const AchievementIcon = ({
   color = "#F8FAFC",
   size = 23,
@@ -716,21 +716,21 @@ export const AchievementIcon = ({
         stroke={color}
         strokeWidth={2}
       />
- 
+
       <Path
         d="M8 6H4V8C4 10.2 5.8 12 8 12"
         stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
       />
- 
+
       <Path
         d="M16 6H20V8C20 10.2 18.2 12 16 12"
         stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
       />
- 
+
       <Path
         d="M12 13V17M9 21H15M10 17H14"
         stroke={color}
@@ -740,7 +740,7 @@ export const AchievementIcon = ({
     </Svg>
   );
 };
- 
+
 export const BookmarkIcon = ({
   color = "#F8FAFC",
   size = 23,
@@ -759,7 +759,7 @@ export const BookmarkIcon = ({
     </Svg>
   );
 };
- 
+
 export const DownloadIcon = ({
   color = "#F8FAFC",
   size = 23,
@@ -770,9 +770,9 @@ export const DownloadIcon = ({
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M5 8H19V20H5V8Z" stroke={color} strokeWidth={2} />
- 
+
       <Path d="M9 8V5H15V8" stroke={color} strokeWidth={2} />
- 
+
       <Path
         d="M12 11V16M9.5 13.5L12 16L14.5 13.5"
         stroke={color}
@@ -783,7 +783,7 @@ export const DownloadIcon = ({
     </Svg>
   );
 };
- 
+
 export const SettingsIcon = ({
   color = "#F8FAFC",
   size = 23,
@@ -794,7 +794,7 @@ export const SettingsIcon = ({
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx={12} cy={12} r={3} stroke={color} strokeWidth={2} />
- 
+
       <Path
         d="M19 13.5V10.5L17 9.7L16.3 8L17.2 6L15.1 3.9L13.1 4.8L11.4 4.1L10.6 2H7.6L6.8 4.1L5.1 4.8L3.1 3.9L1 6L1.9 8L1.2 9.7L-0.8 10.5V13.5L1.2 14.3L1.9 16L1 18L3.1 20.1L5.1 19.2L6.8 19.9L7.6 22H10.6L11.4 19.9L13.1 19.2L15.1 20.1L17.2 18L16.3 16L17 14.3L19 13.5Z"
         stroke={color}
@@ -804,7 +804,7 @@ export const SettingsIcon = ({
     </Svg>
   );
 };
- 
+
 export const HelpIcon = ({
   color = "#F8FAFC",
   size = 23,
@@ -815,19 +815,19 @@ export const HelpIcon = ({
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={2} />
- 
+
       <Path
         d="M9.8 9C9.8 7.7 10.8 6.8 12.2 6.8C13.6 6.8 14.6 7.7 14.6 9C14.6 10.2 13.9 10.8 13 11.4C12.3 11.9 12 12.3 12 13.2"
         stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
       />
- 
+
       <Circle cx={12} cy={17} r={1} fill={color} />
     </Svg>
   );
 };
- 
+
 export const SearchIcon = ({
   color,
   size = 20,
@@ -848,7 +848,7 @@ export const SearchIcon = ({
     />
   </Svg>
 );
- 
+
 export const ClearIcon = ({
   color,
   size = 22,
@@ -866,7 +866,7 @@ export const ClearIcon = ({
     />
   </Svg>
 );
- 
+
 export const CheckIcon = ({
   color = "#F8FAFC",
   size = 20,
@@ -886,7 +886,7 @@ export const CheckIcon = ({
     </Svg>
   );
 };
- 
+
 export const BackIcon = ({ color = theme.colors.text, size = 22 }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
@@ -898,7 +898,7 @@ export const BackIcon = ({ color = theme.colors.text, size = 22 }) => (
     />
   </Svg>
 );
- 
+
 export const TopicIcon = ({ color }: { color: string }) => (
   <Svg width={30} height={30} viewBox="0 0 24 24" fill="none">
     <Path
@@ -929,7 +929,7 @@ export const QuestionIcon = ({ size = 20, color = "#FFFFFF" }) => (
       stroke={color}
       strokeWidth={2}
     />
- 
+
     <Path
       d="M9.5 9.2C9.5 7.8 10.6 7 12 7C13.4 7 14.5 7.9 14.5 9.2C14.5 10.1 14 10.8 13.1 11.4C12.3 12 12 12.5 12 13.4"
       stroke={color}
@@ -937,7 +937,7 @@ export const QuestionIcon = ({ size = 20, color = "#FFFFFF" }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
- 
+
     <Path
       d="M12 17H12.01"
       stroke={color}
@@ -946,7 +946,7 @@ export const QuestionIcon = ({ size = 20, color = "#FFFFFF" }) => (
     />
   </Svg>
 );
- 
+
 export const DoneIcon = ({
   size = 20,
   color = "#000",
@@ -957,7 +957,7 @@ export const DoneIcon = ({
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth={2} />
- 
+
       <Path
         d="M8.5 12.2L11 14.7L15.8 9.8"
         stroke={color}
@@ -968,5 +968,200 @@ export const DoneIcon = ({
     </Svg>
   );
 };
- 
- 
+
+export const AISettingsIcon = ({
+  size = 24,
+  color = theme.colors.text,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+      stroke={color}
+      strokeWidth="1.8"
+    />
+    <Path
+      d="M19.4 13.5c.04-.33.06-.66.06-1s-.02-.67-.06-1l2.1-1.63a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.48 1a7.3 7.3 0 0 0-1.72-1l-.38-2.65a.5.5 0 0 0-.5-.4h-4a.5.5 0 0 0-.5.4l-.38 2.65c-.63.24-1.2.58-1.72 1l-2.48-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64L4.6 11.5c-.04.33-.06.66-.06 1s.02.67.06 1l-2.1 1.63a.5.5 0 0 0-.12.64l2 3.46a.5.5 0 0 0 .6.22l2.48-1c.52.42 1.09.76 1.72 1l.38 2.65a.5.5 0 0 0 .5.4h4a.5.5 0 0 0 .5-.4l.38-2.65c.63-.24 1.2-.58 1.72-1l2.48 1a.5.5 0 0 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64L19.4 13.5Z"
+      stroke={color}
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const AIRobotIcon = ({
+  size = 40,
+  color = theme.colors.primary,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <Line
+      x1="32"
+      y1="7"
+      x2="32"
+      y2="13"
+      stroke={color}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    />
+
+    <Circle cx="32" cy="5" r="2.5" fill={color} />
+
+    <Rect
+      x="14"
+      y="15"
+      width="36"
+      height="32"
+      rx="13"
+      stroke={color}
+      strokeWidth="3"
+    />
+
+    <Circle cx="25" cy="30" r="4" fill={color} />
+
+    <Circle cx="39" cy="30" r="4" fill={color} />
+
+    <Path
+      d="M24 39C28 42 36 42 40 39"
+      stroke={color}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    />
+
+    <Path
+      d="M14 24H10C8.9 24 8 24.9 8 26V35C8 36.1 8.9 37 10 37H14"
+      stroke={color}
+      strokeWidth="2.5"
+    />
+
+    <Path
+      d="M50 24H54C55.1 24 56 24.9 56 26V35C56 36.1 55.1 37 54 37H50"
+      stroke={color}
+      strokeWidth="2.5"
+    />
+
+    <Path d="M18 48H46" stroke={color} strokeWidth="3" strokeLinecap="round" />
+  </Svg>
+);
+
+export const AIPaperclipIcon = ({
+  size = 21,
+  color = theme.colors.text,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 1 1 5.66 5.66l-9.2 9.19a2 2 0 1 1-2.83-2.83l8.49-8.48"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const AIMicIcon = ({
+  size = 21,
+  color = theme.colors.text,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Rect
+      x="9"
+      y="1"
+      width="6"
+      height="12"
+      rx="3"
+      stroke={color}
+      strokeWidth="1.8"
+    />
+
+    <Path
+      d="M19 10v2a7 7 0 0 1-14 0v-2"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+
+    <Line
+      x1="12"
+      y1="19"
+      x2="12"
+      y2="23"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+
+    <Line
+      x1="8"
+      y1="23"
+      x2="16"
+      y2="23"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </Svg>
+);
+
+export const AISendIcon = ({
+  size = 24,
+  color = theme.colors.black,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"
+      fill={color}
+      transform="rotate(-45 12 12)"
+    />
+  </Svg>
+);
+
+export const AICheckIcon = ({
+  size = 16,
+  color = "#C4B5FD",
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M20 6L9 17l-5-5"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const AISparkleIcon = ({
+  size = 30,
+  color = theme.colors.primary,
+}: {
+  size?: number;
+  color?: string;
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M9.5 2C10.05 6.4 11.6 7.95 16 8.5C11.6 9.05 10.05 10.6 9.5 15C8.95 10.6 7.4 9.05 3 8.5C7.4 7.95 8.95 6.4 9.5 2Z"
+      fill={color}
+    />
+    <Path
+      d="M18 11.5C18.3 13.75 19.25 14.7 21.5 15C19.25 15.3 18.3 16.25 18 18.5C17.7 16.25 16.75 15.3 14.5 15C16.75 14.7 17.7 13.75 18 11.5Z"
+      fill={color}
+    />
+  </Svg>
+);

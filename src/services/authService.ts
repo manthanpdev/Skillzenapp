@@ -43,6 +43,7 @@ export const registerUser = async (
   });
 
   // Save additional user information in Firestore
+  
   await setDoc(doc(db, "users", user.uid), {
     uid: user.uid,
     fullName,
@@ -110,12 +111,11 @@ export const signInWithGoogle = async () => {
   return user;
 };
 
-
 // user Logout
 
 export const logOutCurrentUser = async () => {
   try {
-    const isUserLOgin = await GoogleSignin.getCurrentUser()
+    const isUserLOgin = GoogleSignin.getCurrentUser()
     if (isUserLOgin) {
       await GoogleSignin.signOut()
     }

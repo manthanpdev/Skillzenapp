@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 
 import { Category, Topic, Lesson } from "../utils/types/Apptypes";
@@ -23,6 +23,7 @@ export const fetchTopicsByCategory = createAsyncThunk(
     const topicsQuery = query(
       collection(db, "topics"),
       where("categoryId", "==", categoryId),
+      orderBy("order", "asc"),
     );
 
     const data = await getDocs(topicsQuery);
@@ -51,5 +52,5 @@ export const fetchLessonsByTopic = createAsyncThunk(
 );
 
 export const logOutUser = createAsyncThunk("user/logout", async () => {
-  await logOutCurrentUser();
-});
+  await logOutCurrentUser()
+})

@@ -12,6 +12,7 @@ const AppTextInput = ({
   error,
   helperText,
   leftIcon,
+  rightIcon,
   containerStyle,
   isPassword = false,
   inputContainerStyle,
@@ -57,6 +58,7 @@ const AppTextInput = ({
           {...props}
         />
 
+        {rightIcon ? <View style={styles.rightIcon}>{rightIcon}</View> : null}
         {isPassword ? (
           <AppButton
             icon={passwordIcon}
@@ -122,6 +124,11 @@ const styles = StyleSheet.create({
 
   leftIcon: {
     marginRight: 8,
+  },
+  rightIcon: {
+    marginLeft: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   errorText: {
