@@ -18,7 +18,7 @@ import { theme } from "@/utils/theme/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import {  updateTopicProgress } from "@/redux/actions";
+import { updateTopicProgress } from "@/redux/actions";
 
 const LessonComp = () => {
   const router = useRouter();
@@ -45,43 +45,58 @@ const LessonComp = () => {
     savedProgress?.completed ? 0 : (savedProgress?.lastLessonIndex ?? 0),
   );
 
-const lesson = topicLessons[currentLessonIndex];
-const isLastLesson =
-  topicLessons.length > 0 && currentLessonIndex === topicLessons.length - 1;
-  
-const progressPercent =
-  topicLessons.length === 0
-    ? 0
-    : Math.round((currentLessonIndex / topicLessons.length) * 100);
+  // tracks whether the Next/Done tap is currently waiting on Firestore
+  const [isSaving, setIsSaving] = useState(false);
 
+  const lesson = topicLessons[currentLessonIndex];
+  const isLastLesson =
+    topicLessons.length > 0 && currentLessonIndex === topicLessons.length - 1;
+
+  const progressPercent =
+    topicLessons.length === 0
+      ? 0
+      : Math.round((currentLessonIndex / topicLessons.length) * 100);
 
   // Save progress whenever the lesson index changes (Next / Previous)
- useEffect(() => {
-  if (!currentUser || !selectedTopicId || topicLessons.length === 0) return;
+  useEffect(() => {
+    if (!currentUser || !selectedTopicId || topicLessons.length === 0) return;
 
-  dispatch(
-    updateTopicProgress({
-      categoryTitle: selectedTopic?.title ?? "",
-      topicId: selectedTopicId,
-      lastLessonIndex: currentLessonIndex,
-      completed: isLastLesson,
-    }),
-  );
-}, [currentLessonIndex]);
-
-const handleDone = () => {
-  if (currentUser && selectedTopicId) {
     dispatch(
       updateTopicProgress({
         categoryTitle: selectedTopic?.title ?? "",
         topicId: selectedTopicId,
         lastLessonIndex: currentLessonIndex,
-        completed: true,
+        completed: isLastLesson,
       }),
     );
-  }
-  router.back();
-};
+  }, [currentLessonIndex]);
+
+  const handleNext = async () => {
+    if (isSaving) return; // guard against double taps while a save is in flight
+
+    if (isLastLesson) {
+      if (currentUser && selectedTopicId) {
+        try {
+          setIsSaving(true);
+          await dispatch(
+            updateTopicProgress({
+              categoryTitle: selectedTopic?.title ?? "",
+              topicId: selectedTopicId,
+              lastLessonIndex: currentLessonIndex,
+              completed: true,
+            }),
+          ).unwrap();
+        } catch (err) {
+          console.log("Unable to save progress", err);
+        } finally {
+          setIsSaving(false);
+        }
+      }
+      router.back();
+    } else {
+      setCurrentLessonIndex((prev) => prev + 1);
+    }
+  };
 
   if (isLessonsLoading) {
     return (
@@ -174,6 +189,7 @@ const handleDone = () => {
             title="Previous"
             height={50}
             width="48%"
+            disabled={isSaving}
             onPress={() => {
               setCurrentLessonIndex((prev) => prev - 1);
             }}
@@ -195,15 +211,12 @@ const handleDone = () => {
           }
           iconPosition="right"
           title={isLastLesson ? "Done" : "Next"}
+          loadingTitle={isLastLesson ? "Saving..." : undefined}
+          loading={isLastLesson && isSaving}
+          disabled={isSaving}
           height={50}
           width={currentLessonIndex === 0 ? "100%" : "48%"}
-          onPress={() => {
-            if (isLastLesson) {
-              handleDone();
-            } else {
-              setCurrentLessonIndex((prev) => prev + 1);
-            }
-          }}
+          onPress={handleNext}
           backgroundColor={theme.colors.primary}
           textStyle={{ fontSize: 15 }}
           textColor={theme.colors.black}

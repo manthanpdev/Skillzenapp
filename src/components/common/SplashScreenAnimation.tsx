@@ -11,6 +11,7 @@ import { toAppUser } from "@/services/authService";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { AppLogo } from "../../assets/Svg/SvgIcons";
 import { fetchCategories } from "@/redux/actions";
+import { seedTopics } from "../../assets/seedTopics";
 
 const { width, height } = Dimensions.get("window");
 const TRACK_WIDTH = width * 0.6;
@@ -45,6 +46,10 @@ const SplashScreenAnimation = () => {
 
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textTranslateY = useRef(new Animated.Value(8)).current;
+
+  // useEffect(()=>{
+  //   seedTopics()
+  // })
 
   useEffect(() => {
     let authUser: typeof auth.currentUser = null;
