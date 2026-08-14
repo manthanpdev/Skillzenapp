@@ -69,7 +69,7 @@ const LoginComponent = () => {
     setIsGoogleLoading(true);
     try {
       const user = await signInWithGoogle();
-      dispatch(setUser(toAppUser(user)));
+      dispatch(setUser(await toAppUser(user)));
       router.replace("/(tabs)");
     } catch (error: any) {
       console.log("Google Sign-In error:", error);
@@ -100,7 +100,7 @@ const LoginComponent = () => {
     setIsSigningIn(true);
     try {
       const user = await loginUser(email.trim().toLowerCase(), password);
-      dispatch(setUser(toAppUser(user)));
+      dispatch(setUser(await toAppUser(user)));
       router.replace("/(tabs)");
     } catch (error: any) {
       console.log("Login error:", error);

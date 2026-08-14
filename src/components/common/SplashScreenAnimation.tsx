@@ -51,11 +51,11 @@ const SplashScreenAnimation = () => {
     let authResolved = false;
     let categoriesResolved = false;
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       authUser = user;
       authResolved = true;
       if (user) {
-        dispatch(setUser(toAppUser(user)));
+        dispatch(setUser(await toAppUser(user)));
       } else {
         dispatch(clearUser());
       }

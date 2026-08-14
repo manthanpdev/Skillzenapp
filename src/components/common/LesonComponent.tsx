@@ -7,24 +7,18 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppButton from "../ReusableComp/AppButton";
-
 import {
   BackIcon,
   ChevronRightIcon,
   DoneIcon,
 } from "../../assets/Svg/SvgIcons";
-
 import { theme } from "@/utils/theme/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { useDispatch, useSelector } from "react-redux";
-
 import { AppDispatch, RootState } from "@/redux/store";
-
-import { updateTopicProgress } from "@/redux/reducers";
+import {  updateTopicProgress } from "@/redux/actions";
 
 const LessonComp = () => {
   const router = useRouter();
@@ -40,31 +34,54 @@ const LessonComp = () => {
     .filter((lesson) => lesson.topicId === selectedTopicId)
     .sort((a, b) => a.lessonNumber - b.lessonNumber);
 
-  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  // Find saved progress for this exact topic (if any)
+  const savedProgress = currentUser?.userdata?.find(
+    (entry) =>
+      entry.categoryTitle === selectedTopic?.title &&
+      entry.topicId === selectedTopicId,
+  );
 
-  const lesson = topicLessons[currentLessonIndex];
-  const isLastLesson =
-    topicLessons.length > 0 && currentLessonIndex === topicLessons.length - 1;
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(
+    savedProgress?.completed ? 0 : (savedProgress?.lastLessonIndex ?? 0),
+  );
 
-  const progressPercent =
-    topicLessons.length === 0
-      ? 0
-      : Math.round((currentLessonIndex / topicLessons.length) * 100);
+const lesson = topicLessons[currentLessonIndex];
+const isLastLesson =
+  topicLessons.length > 0 && currentLessonIndex === topicLessons.length - 1;
+  
+const progressPercent =
+  topicLessons.length === 0
+    ? 0
+    : Math.round((currentLessonIndex / topicLessons.length) * 100);
 
-  const completeCurrentLesson = () => {
-    if (!currentUser || !selectedTopicId || topicLessons.length === 0) {
-      return;
-    }
 
+  // Save progress whenever the lesson index changes (Next / Previous)
+ useEffect(() => {
+  if (!currentUser || !selectedTopicId || topicLessons.length === 0) return;
+
+  dispatch(
+    updateTopicProgress({
+      categoryTitle: selectedTopic?.title ?? "",
+      topicId: selectedTopicId,
+      lastLessonIndex: currentLessonIndex,
+      completed: isLastLesson,
+    }),
+  );
+}, [currentLessonIndex]);
+
+const handleDone = () => {
+  if (currentUser && selectedTopicId) {
     dispatch(
       updateTopicProgress({
         categoryTitle: selectedTopic?.title ?? "",
         topicId: selectedTopicId,
         lastLessonIndex: currentLessonIndex,
-        completed: isLastLesson,
+        completed: true,
       }),
     );
-  };
+  }
+  router.back();
+};
 
   if (isLessonsLoading) {
     return (
@@ -181,10 +198,8 @@ const LessonComp = () => {
           height={50}
           width={currentLessonIndex === 0 ? "100%" : "48%"}
           onPress={() => {
-            completeCurrentLesson();
-
             if (isLastLesson) {
-              router.back();
+              handleDone();
             } else {
               setCurrentLessonIndex((prev) => prev + 1);
             }

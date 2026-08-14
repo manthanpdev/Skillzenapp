@@ -4,9 +4,10 @@ import {
   fetchCategories,
   fetchTopicsByCategory,
   fetchLessonsByTopic,
-  logOutUser
+  logOutUser,
+  updateTopicProgress,
 } from "./actions";
-import { GlobalState, UserData, TopicProgress } from "../utils/types/Apptypes";
+import { GlobalState, UserData } from "../utils/types/Apptypes";
 
 const initialState: GlobalState = {
   currentUser: null,
@@ -54,39 +55,18 @@ const globalSlice = createSlice({
     setSelectedTopic: (state, action: PayloadAction<string>) => {
       state.selectedTopicId = action.payload;
     },
-
-    updateTopicProgress: (state, action: PayloadAction<TopicProgress>) => {
-      if (!state.currentUser) {
-        return;
-      }
-      const progress = action.payload;
-      if (!state.currentUser.userData) {
-        state.currentUser.userData = [];
-      }
-      const existingIndex = state.currentUser.userData.findIndex(
-        (item) => item.topicId === progress.topicId,
-      );
-      if (existingIndex === -1) {
-        state.currentUser.userData.push(progress);
-      } else {
-        state.currentUser.userData[existingIndex] = progress;
-      }
-    },
   },
 
   extraReducers: (builder) => {
-    // Categories
     builder
       .addCase(fetchCategories.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
         state.isLoading = false;
       })
-
       .addCase(fetchCategories.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || "Unable to fetch categories";
@@ -105,7 +85,6 @@ const globalSlice = createSlice({
         state.error = action.error.message || "Unable to fetch topics";
       });
 
-    // Lessons
     builder
       .addCase(fetchLessonsByTopic.pending, (state) => {
         state.isLessonsLoading = true;
@@ -118,16 +97,26 @@ const globalSlice = createSlice({
         state.isLessonsLoading = false;
         state.error = action.error.message || "Unable to fetch lessons";
       });
-      
-    // logout Current User
-    builder.addCase(logOutUser.fulfilled, (state) => {
-      state.currentUser = null
-      state.isAuthResolved = true
-    })
 
-    builder.addCase(logOutUser.rejected, (state, action) => {
-      state.error = action.error.message || "Unable to logout";
-    })
+    builder
+      .addCase(logOutUser.fulfilled, (state) => {
+        state.currentUser = null;
+        state.isAuthResolved = true;
+      })
+      .addCase(logOutUser.rejected, (state, action) => {
+        state.error = action.error.message || "Unable to logout";
+      });
+
+    builder
+      .addCase(updateTopicProgress.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateTopicProgress.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+      })
+      .addCase(updateTopicProgress.rejected, (state, action) => {
+        state.error = action.error.message || "Unable to update progress";
+      });
   },
 });
 
@@ -137,7 +126,6 @@ export const {
   setUser,
   setSelectedCategory,
   setSelectedTopic,
-  updateTopicProgress,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

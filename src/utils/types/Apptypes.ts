@@ -124,7 +124,7 @@ export type UserData = {
   photo?: string;
   googlePhoto?: string;
   loginType: "email" | "google";
-  userData: TopicProgress[];
+  userdata: TopicProgress[];
   uid: string;
   photoURL: string | null;
 };

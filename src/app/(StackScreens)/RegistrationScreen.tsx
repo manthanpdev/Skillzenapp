@@ -26,7 +26,7 @@ const RegistrationScreen = () => {
         values.email,
         values.password,
       );
-      dispatch(setUser(toAppUser(user)));
+       dispatch(setUser(await toAppUser(user)));
       router.replace("/(tabs)");
     } catch (error: any) {
       console.log("Registration error:", error);
@@ -61,7 +61,7 @@ const RegistrationScreen = () => {
     setIsGoogleLoading(true);
     try {
       const user = await signInWithGoogle();
-      dispatch(setUser(toAppUser(user)));
+       dispatch(setUser(await toAppUser(user)));
       router.replace("/(tabs)");
     } catch (error: any) {
       console.log("Google Sign-In error:", error);

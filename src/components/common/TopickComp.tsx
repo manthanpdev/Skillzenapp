@@ -43,7 +43,7 @@ const TopickComp = () => {
         completed: false,
       };
     }
-    const topicProgress: any = currentUser?.userData?.find(
+    const topicProgress: any = currentUser?.userdata?.find(
       (progress) => progress.topicId === topicId,
     );
 
@@ -54,14 +54,14 @@ const TopickComp = () => {
       };
     }
 
-    const completedLessons =
-      topicProgress.lastLessonIndex < 0
-        ? 0
-        : Math.min(topicProgress.lastLessonIndex + 1, totalLessons);
+    const lastLessonIndex = topicProgress.lastLessonIndex ?? 0;
+    const completedLessons = Math.min(lastLessonIndex, totalLessons);
 
-    const percent = Math.round((completedLessons / totalLessons) * 100);
+    const percent = topicProgress.completed
+      ? 100
+      : Math.round((completedLessons / totalLessons) * 100);
 
-    const completed = topicProgress.completed || percent === 100;
+    const completed = topicProgress.completed ?? false;
 
     return {
       percent,
@@ -136,10 +136,10 @@ const TopickComp = () => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={async () => {
+                onPress={() => {
                   dispatch(setSelectedTopic(item.id));
-                  router.navigate("/LessonScreen");
                   dispatch(fetchLessonsByTopic(item.id));
+                  router.navigate("/LessonScreen");
                 }}
                 style={styles.row}
               >

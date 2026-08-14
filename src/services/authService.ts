@@ -8,21 +8,43 @@ import {
   User,
   signOut
 } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 import { auth } from "../config/firebaseAuth";
 import { db } from "@/config/firebaseConfig";
+import { UserData } from "@/utils/types/Apptypes";
 
 // ================================
 // Email / Password Registration
 // ================================
 
-export const toAppUser = (user: User): any => ({
-  uid: user.uid,
-  fullName: user.displayName,
-  photoURL: user.photoURL,
-  email: user.email,
-});
+export const toAppUser = async (user: User): Promise<UserData> => {
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const data = snap.exists() ? snap.data() : {};
+
+  const toMillis = (value: any): number => {
+    if (typeof value === "number") return value;
+    if (value?.toMillis) return value.toMillis();
+    if (value?.seconds) return value.seconds * 1000;
+    return Date.now();
+  };
+
+  const userdata = (data.userdata ?? []).map((entry: any) => ({
+    ...entry,
+    startedAt: toMillis(entry.startedAt),
+    updatedAt: toMillis(entry.updatedAt),
+  }));
+
+  return {
+    id: user.uid,
+    uid: user.uid,
+    fullName: user.displayName,
+    photoURL: user.photoURL,
+    email: user.email!,
+    loginType: data.provider === "google" ? "google" : "email",
+    userdata,
+  };
+};
 
 export const registerUser = async (
   fullName: string,
@@ -81,9 +103,7 @@ GoogleSignin.configure({
 
 export const signInWithGoogle = async () => {
   await GoogleSignin.hasPlayServices();
-  // Clear the previous Google Sign-In session
   await GoogleSignin.signOut();
-  // Now show the Google account chooser
   const response = await GoogleSignin.signIn();
   if (response.type !== "success") {
     throw new Error("Google Sign-In was cancelled");
@@ -103,7 +123,6 @@ export const signInWithGoogle = async () => {
       email: user.email,
       photoURL: user.photoURL ?? null,
       provider: "google",
-      userdata: [],
       updatedAt: serverTimestamp(),
     },
     { merge: true },
