@@ -1,4 +1,4 @@
-import "../config/firebaseConfig"
+import "../config/firebaseConfig";
 import "../config/firebaseAuth";
 import { Stack } from "expo-router";
 import { Provider } from "react-redux";
