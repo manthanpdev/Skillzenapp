@@ -42,7 +42,7 @@ const CategoriesComp = ({
         searchQuery ? 0 : SECTION_ENTRY_DELAY,
       ).duration(300)}
     >
-      <Text style={[styles.heading, { marginTop: ismarginTop ? 12 : 0 }]}>
+      <Text style={[styles.heading, { marginTop: ismarginTop ? -2 : -1 }]}>
         Categories
       </Text>
 

@@ -6,6 +6,7 @@ import {
   fetchLessonsByTopic,
   logOutUser,
   updateTopicProgress,
+  updateLastReadTopic,
 } from "./actions";
 import { GlobalState, UserData } from "../utils/types/Apptypes";
 
@@ -39,7 +40,11 @@ const globalSlice = createSlice({
     },
 
     setUser: (state, action: PayloadAction<UserData>) => {
-      state.currentUser = action.payload;
+      const incoming = action.payload;
+      state.currentUser = {
+        ...incoming,
+        lastReadTopic: incoming.lastReadTopic ?? state.currentUser?.lastReadTopic ?? null,
+      };
       state.isAuthResolved = true;
     },
 
@@ -111,11 +116,26 @@ const globalSlice = createSlice({
       .addCase(updateTopicProgress.pending, (state) => {
         state.error = null;
       })
-      .addCase(updateTopicProgress.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
-      })
+     .addCase(updateTopicProgress.fulfilled, (state, action) => {
+  if (state.currentUser) {
+    state.currentUser.userdata = action.payload;
+  }
+})
       .addCase(updateTopicProgress.rejected, (state, action) => {
         state.error = action.error.message || "Unable to update progress";
+      });
+
+    builder
+      .addCase(updateLastReadTopic.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateLastReadTopic.fulfilled, (state, action) => {
+        if (state.currentUser) {
+          state.currentUser.lastReadTopic = action.payload;
+        }
+      })
+      .addCase(updateLastReadTopic.rejected, (state, action) => {
+        state.error = action.error.message || "Unable to update last read topic";
       });
   },
 });

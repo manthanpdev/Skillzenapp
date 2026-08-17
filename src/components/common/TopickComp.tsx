@@ -15,7 +15,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppButton from "../ReusableComp/AppButton";
 import { setSelectedTopic } from "@/redux/reducers";
-import { fetchLessonsByTopic } from "@/redux/actions";
+import { fetchLessonsByTopic, updateLastReadTopic } from "@/redux/actions";
 
 const RING_SIZE = 46;
 
@@ -29,6 +29,7 @@ const TopickComp = () => {
     currentUser,
     isTopicsLoading,
   } = useSelector((state: RootState) => state.global);
+
 
   const category = categories.find((item) => item.id === selectedCategoryId);
 
@@ -67,6 +68,27 @@ const TopickComp = () => {
       percent,
       completed,
     };
+  };
+
+  const handleTopicPress = (topicId: string, topicTitle: string) => {
+    const topicProgress = currentUser?.userdata?.find(
+      (progress) => progress.topicId === topicId,
+    );
+    const startLessonIndex = topicProgress?.completed
+      ? 0
+      : (topicProgress?.lastLessonIndex ?? 0);
+
+    dispatch(setSelectedTopic(topicId));
+    dispatch(fetchLessonsByTopic(topicId));
+    dispatch(
+      updateLastReadTopic({
+        topicId,
+        topicTitle,
+        lastLessonIndex: startLessonIndex,
+        lessonTitle: "",
+      }),
+    );
+    router.navigate("/LessonScreen");
   };
 
   return (
@@ -136,11 +158,7 @@ const TopickComp = () => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => {
-                  dispatch(setSelectedTopic(item.id));
-                  dispatch(fetchLessonsByTopic(item.id));
-                  router.navigate("/LessonScreen");
-                }}
+                onPress={() => handleTopicPress(item.id, item.title)}
                 style={styles.row}
               >
                 <View

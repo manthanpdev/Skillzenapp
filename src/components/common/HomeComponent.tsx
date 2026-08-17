@@ -14,7 +14,6 @@ import BenefitsSection from "./BenefitsSection";
 import CategoriesComp from "./CatogeriesComp";
 import { ContinueLearningComp } from "./ContinueLearningCompTwo";
 
-
 const HomeComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -54,7 +53,6 @@ const HomeComponent = () => {
   const onMeasureLayout = useCallback(
     (e: { nativeEvent: { layout: { height: number } } }) => {
       const h = e.nativeEvent.layout.height;
-      // only capture once (or update if content height actually changes)
       if (h > 0 && Math.abs(measuredHeight.value - h) > 1) {
         measuredHeight.value = h;
       }
@@ -66,7 +64,6 @@ const HomeComponent = () => {
     setSearchQuery("");
     setIsSearchFocused(false);
   }, []);
-
 
   return (
     <Animated.ScrollView
@@ -87,12 +84,15 @@ const HomeComponent = () => {
         onFocusChange={setIsSearchFocused}
       />
 
+      {/* Moved outside the collapsible/height-locked wrapper — always renders,
+          never subject to measuredHeight clipping */}
+      <BenefitsSection />
+
       <Animated.View
         style={collapsibleStyle}
         pointerEvents={isSearching ? "none" : "auto"}
       >
         <View onLayout={onMeasureLayout}>
-          <BenefitsSection />
           <ContinueLearningComp margintop={isSearching} scrollY={scrollY} />
         </View>
       </Animated.View>
@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
 
   contentContainer: {
     paddingHorizontal: 15,
-    // paddingBottom: 24,
   },
 
   loaderContainer: {
@@ -121,5 +120,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
 });

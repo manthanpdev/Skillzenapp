@@ -1,44 +1,95 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { DUMMY_TOPICS } from "../../utils/constants/dummyTopicks";
+import { useRouter } from "expo-router";
 import { ContinueLearningCart } from "./ContinueLearningCart";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { fetchLessonsByTopic } from "@/redux/actions";
 
-const COLLAPSE_RANGE = 140; // px of scroll over which the card fully collapses
+const COLLAPSE_RANGE = 140;
 
 export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
   const [cardHeight, setCardHeight] = useState(0);
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { topic, currentLesson, progressPercent, nextLessonLabel, streakDays } =
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const { currentUser } = useSelector((state: RootState) => state.global);
+
+  const topicId = currentUser?.lastReadTopic?.topicId;
+  const topicTitle = currentUser?.lastReadTopic?.topicTitle;
+
+  useEffect(() => {
+    if (!topicId) return;
+
+    setIsLoading(true);
+    dispatch(fetchLessonsByTopic(topicId))
+      .unwrap()
+      .then((data) => setLessons(data))
+      .catch((err) => console.log("Failed to fetch lessons:", err))
+      .finally(() => setIsLoading(false));
+  }, [topicId, dispatch]);
+
+  const savedProgress = useMemo(() => {
+    return currentUser?.userdata?.find(
+      (entry) => entry.topicTitle === topicTitle && entry.topicId === topicId,
+    );
+  }, [currentUser?.userdata, topicTitle, topicId]);
+
+  const currentLessonIndex = savedProgress?.completed
+    ? 0
+    : (savedProgress?.lastLessonIndex ?? 0);
+
+  const topicLessons = useMemo(
+    () => [...lessons].sort((a, b) => a.lessonNumber - b.lessonNumber),
+    [lessons],
+  );
+
+  const { currentLessonTitle, nextLessonLabel, progressPercent, isLastLesson } =
     useMemo(() => {
-      const topic =
-        DUMMY_TOPICS[Math.floor(Math.random() * DUMMY_TOPICS.length)];
+      if (topicLessons.length === 0) {
+        return {
+          currentLessonTitle: undefined,
+          nextLessonLabel: undefined,
+          progressPercent: 0,
+          isLastLesson: false,
+        };
+      }
 
-      const currentLesson =
-        Math.floor(Math.random() * (topic.totalLessons - 1)) + 1;
-      const progressPercent = Math.round(
-        (currentLesson / topic.totalLessons) * 100,
-      );
-      const nextLessonLabel = `Lesson ${currentLesson + 1}: ${topic.title} basics`;
-      const streakDays = Math.floor(Math.random() * 14) + 1;
+      const isLastLesson = currentLessonIndex >= topicLessons.length - 1;
+      const nextLesson = isLastLesson
+        ? undefined
+        : topicLessons[currentLessonIndex + 1];
 
       return {
-        topic,
-        currentLesson,
-        progressPercent,
-        nextLessonLabel,
-        streakDays,
+        currentLessonTitle: topicLessons[currentLessonIndex]?.title,
+        nextLessonLabel: nextLesson?.title,
+        progressPercent: Math.round(
+          (currentLessonIndex / topicLessons.length) * 100,
+        ),
+        isLastLesson,
       };
-    }, []);
+    }, [topicLessons, currentLessonIndex]);
 
+  // Pass topicId, title, AND the exact lesson index the user should land on.
+  // LessonComp uses this directly as its initial index instead of re-deriving
+  // it from savedProgress, so there's zero lookup/race risk on arrival.
   const handleResume = () => {
-    // TODO: navigate to the lesson screen, e.g.
-    // navigation.navigate("Lesson", { topicId: topic.id, lessonNumber: currentLesson });
-    console.log("Resume:", topic.id, currentLesson);
+    if (!topicId) return;
+    router.navigate({
+      pathname: "/(StackScreens)/LessonScreen", // adjust to your actual lesson route
+      params: {
+        topicId,
+        topicTitle: topicTitle ?? "",
+        lessonIndex: String(currentLessonIndex),
+      },
+    });
   };
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -67,44 +118,38 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
       [1, 0.92],
       Extrapolation.CLAMP,
     );
-
-    return {
-      height,
-      opacity,
-      marginBottom,
-      transform: [{ scale }],
-    };
+    return { height, opacity, marginBottom, transform: [{ scale }] };
   });
 
+  if (!topicId) return null;
+
   return (
-    <Animated.View
-      style={[
-        styles.wrap,
-        cardHeight ? animatedStyle : undefined,
-        {
-          marginTop: margintop && 15,
-        },
-      ]}
-      onLayout={(e) => {
-        if (!cardHeight) setCardHeight(e.nativeEvent.layout.height);
-      }}
-    >
-      <ContinueLearningCart
-        topicTitle={topic.title}
-        currentLesson={currentLesson}
-        totalLessons={topic.totalLessons}
-        progressPercent={progressPercent}
-        nextLessonLabel={nextLessonLabel}
-        streakDays={streakDays}
-        onResume={handleResume}
-      />
-    </Animated.View>
+        <Animated.View
+          style={[
+            styles.wrap,
+            cardHeight ? animatedStyle : undefined,
+            { marginTop: margintop && 15 },
+          ]}
+          onLayout={(e) => {
+            if (!cardHeight) setCardHeight(e.nativeEvent.layout.height);
+          }}
+        >
+          <ContinueLearningCart
+            currentLessonTitle={currentLessonTitle}
+            currentLesson={currentLessonIndex + 1}
+            totalLessons={topicLessons.length}
+            progressPercent={progressPercent}
+            nextLessonLabel={nextLessonLabel}
+            isLoading={isLoading}
+            onResume={handleResume}
+          />
+        </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   wrap: {
     overflow: "hidden",
-    marginBottom: 0
+    marginBottom: 0,
   },
 });

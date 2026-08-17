@@ -1,10 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { theme } from "../../utils/theme/Theme";
-import {
-  ArrowIcon,
-  LessonsIcon,
-} from "../../assets/Svg/SvgIcons";
+import { ArrowIcon, LessonsIcon } from "../../assets/Svg/SvgIcons";
 import { ContinueLearningCardProps } from "@/utils/types/Apptypes";
 
 export const ContinueLearningCart = ({
@@ -14,6 +11,7 @@ export const ContinueLearningCart = ({
   progressPercent,
   nextLessonLabel,
   onResume,
+  currentLessonTitle
 }: ContinueLearningCardProps) => {
   return (
     <View style={styles.card}>
@@ -25,7 +23,7 @@ export const ContinueLearningCart = ({
           </View>
           <View>
             <Text style={styles.eyebrow}>continue learning</Text>
-            <Text style={styles.title}>{topicTitle}</Text>
+            <Text style={styles.title}>{currentLessonTitle ?? "empty"}</Text>
           </View>
         </View>
       </View>
@@ -49,7 +47,7 @@ export const ContinueLearningCart = ({
         </View>
 
         <Text style={styles.nextText} numberOfLines={1}>
-          next: {nextLessonLabel}
+          Next : {nextLessonLabel}
         </Text>
       </View>
 
@@ -59,7 +57,7 @@ export const ContinueLearningCart = ({
         onPress={onResume}
         activeOpacity={0.85}
       >
-        <Text style={styles.resumeText}>resume lesson</Text>
+        <Text style={styles.resumeText}>Resume lesson</Text>
         <ArrowIcon
           size={16}
           color={theme.colors.background}
@@ -111,7 +109,6 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
 
-  
   progressRow: {
     marginBottom: theme.spacing.sm + 4,
   },

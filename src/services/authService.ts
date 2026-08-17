@@ -43,6 +43,9 @@ export const toAppUser = async (user: User): Promise<UserData> => {
     email: user.email!,
     loginType: data.provider === "google" ? "google" : "email",
     userdata,
+    lastReadTopic: data.lastReadTopic
+      ? { ...data.lastReadTopic, updatedAt: toMillis(data.lastReadTopic.updatedAt) }
+      : null,
   };
 };
 
