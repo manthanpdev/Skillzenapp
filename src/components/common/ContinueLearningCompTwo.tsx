@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
-  Extrapolation,
-  interpolate,
   useAnimatedStyle,
+  interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { ContinueLearningCart } from "./ContinueLearningCart";
@@ -13,15 +13,23 @@ import { fetchLessonsByTopic } from "@/redux/actions";
 
 const COLLAPSE_RANGE = 140;
 
-export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
+interface ContinueLearningCompProps {
+  scrollY: any;
+  margintop: boolean;
+  onHeightChange: (height: number) => void;
+}
+
+export const ContinueLearningComp = ({
+  scrollY,
+  margintop,
+  onHeightChange,
+}: ContinueLearningCompProps) => {
   const [cardHeight, setCardHeight] = useState(0);
   const [lessons, setLessons] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { currentUser } = useSelector((state: RootState) => state.global);
-
   const topicId = currentUser?.lastReadTopic?.topicId;
   const topicTitle = currentUser?.lastReadTopic?.topicTitle;
 
@@ -31,9 +39,15 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
     setIsLoading(true);
     dispatch(fetchLessonsByTopic(topicId))
       .unwrap()
-      .then((data) => setLessons(data))
-      .catch((err) => console.log("Failed to fetch lessons:", err))
-      .finally(() => setIsLoading(false));
+      .then((data) => {
+        setLessons(data);
+      })
+      .catch((err) => {
+        console.log("Failed to fetch lessons:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [topicId, dispatch]);
 
   const savedProgress = useMemo(() => {
@@ -42,14 +56,28 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
     );
   }, [currentUser?.userdata, topicTitle, topicId]);
 
-  const currentLessonIndex = savedProgress?.completed
-    ? 0
-    : (savedProgress?.lastLessonIndex ?? 0);
+  /* Check whether the topic is completed. */
+  const isCompleted = savedProgress?.completed === true;
+
+  /* Saved lesson index for an incomplete topic. */
+  const currentLessonIndex = savedProgress?.lastLessonIndex ?? 0;
 
   const topicLessons = useMemo(
     () => [...lessons].sort((a, b) => a.lessonNumber - b.lessonNumber),
     [lessons],
   );
+
+  /*
+   * IMPORTANT: If topic is completed: display the LAST lesson.
+   * Eg: 8 lessons
+   * completed = true
+   * displayLessonIndex = 7
+   * currentLesson = 8
+   */
+  const displayLessonIndex =
+    isCompleted && topicLessons.length > 0
+      ? topicLessons.length - 1
+      : currentLessonIndex;
 
   const { currentLessonTitle, nextLessonLabel, progressPercent } =
     useMemo(() => {
@@ -58,99 +86,123 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
           currentLessonTitle: undefined,
           nextLessonLabel: undefined,
           progressPercent: 0,
-          isLastLesson: false,
         };
       }
 
-      const isLastLesson = currentLessonIndex >= topicLessons.length - 1;
-      const nextLesson = isLastLesson
-        ? undefined
-        : topicLessons[currentLessonIndex + 1];
+      const safeIndex = Math.min(
+        Math.max(displayLessonIndex, 0),
+        topicLessons.length - 1,
+      );
+
+      const nextLesson = isCompleted ? undefined : topicLessons[safeIndex + 1];
 
       return {
-        currentLessonTitle: topicLessons[currentLessonIndex]?.title,
+        currentLessonTitle: topicLessons[safeIndex]?.title,
         nextLessonLabel: nextLesson?.title,
-        progressPercent: Math.round(
-          (currentLessonIndex / topicLessons.length) * 100,
-        ),
-        isLastLesson,
-      };
-    }, [topicLessons, currentLessonIndex]);
 
-  // Pass topicId, title, AND the exact lesson index the user should land on.
-  // LessonComp uses this directly as its initial index instead of re-deriving
-  // it from savedProgress, so there's zero lookup/race risk on arrival.
-  
+        /* Completed = 100%, Otherwise use the existing, progress calculation. */
+        progressPercent: isCompleted
+          ? 100
+          : Math.round((currentLessonIndex / topicLessons.length) * 100),
+      };
+    }, [topicLessons, displayLessonIndex, currentLessonIndex, isCompleted]);
+
+  /*
+   * Resume / Restart navigation.
+   * Incomplete: → saved lesson
+   * Completed: → Lesson 1
+   * The modal itself is handled inside ContinueLearningCart.
+   */
   const handleResume = () => {
     if (!topicId) return;
+
+    const lessonIndex = isCompleted ? 0 : currentLessonIndex;
+
     router.navigate({
-      pathname: "/(StackScreens)/LessonScreen", // adjust to your actual lesson route
+      pathname: "/(StackScreens)/LessonScreen",
+
       params: {
         topicId,
+
         topicTitle: topicTitle ?? "",
-        lessonIndex: String(currentLessonIndex),
+
+        lessonIndex: String(lessonIndex),
       },
     });
   };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    if (!cardHeight) return {};
-    const height = interpolate(
-      scrollY.value,
-      [0, COLLAPSE_RANGE],
-      [cardHeight, 0],
-      Extrapolation.CLAMP,
-    );
+  const visualAnimationStyle = useAnimatedStyle(() => {
+    if (!cardHeight) {
+      return {};
+    }
+
     const opacity = interpolate(
       scrollY.value,
       [0, COLLAPSE_RANGE * 0.6],
       [1, 0],
       Extrapolation.CLAMP,
     );
-    const marginBottom = interpolate(
-      scrollY.value,
-      [0, COLLAPSE_RANGE],
-      [16, 0],
-      Extrapolation.CLAMP,
-    );
+
     const scale = interpolate(
       scrollY.value,
       [0, COLLAPSE_RANGE],
       [1, 0.92],
       Extrapolation.CLAMP,
     );
-    return { height, opacity, marginBottom, transform: [{ scale }] };
+
+    return {
+      opacity,
+
+      transform: [
+        {
+          scale,
+        },
+      ],
+    };
   });
 
-  if (!topicId) return null;
+  if (!topicId) {
+    return null;
+  }
 
   return (
-        <Animated.View
-          style={[
-            styles.wrap,
-            cardHeight ? animatedStyle : undefined,
-            { marginTop: margintop && 15 },
-          ]}
-          onLayout={(e) => {
-            if (!cardHeight) setCardHeight(e.nativeEvent.layout.height);
-          }}
-        >
+    <View
+      style={[
+        styles.wrap,
+        {
+          marginTop: margintop ? 15 : 0,
+        },
+      ]}
+    >
+      <View
+        onLayout={(event) => {
+          const newHeight = event.nativeEvent.layout.height;
+
+          if (newHeight > 0 && Math.abs(newHeight - cardHeight) > 1) {
+            setCardHeight(newHeight);
+
+            onHeightChange(newHeight);
+          }
+        }}
+      >
+        <Animated.View style={visualAnimationStyle}>
           <ContinueLearningCart
-            currentLessonTitle={currentLessonTitle}
-            currentLesson={currentLessonIndex + 1}
+            currentLesson={displayLessonIndex + 1}
             totalLessons={topicLessons.length}
             progressPercent={progressPercent}
             nextLessonLabel={nextLessonLabel}
-            isLoading={isLoading}
+            currentLessonTitle={currentLessonTitle}
             onResume={handleResume}
+            isCompleted={isCompleted}
           />
         </Animated.View>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   wrap: {
-    overflow: "hidden",
-    marginBottom: 0,
+    width: "100%",
   },
 });

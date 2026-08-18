@@ -1,33 +1,35 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   FadeIn,
+  Easing,
+  interpolate,
+  Extrapolation,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  Easing,
 } from "react-native-reanimated";
+
 import HomeScreenHeaderComp from "./HomeScreenHeadercomp";
 import CustomeSearch from "../ReusableComp/CustomeSearch";
 import BenefitsSection from "./BenefitsSection";
 import CategoriesComp from "./CatogeriesComp";
 import { ContinueLearningComp } from "./ContinueLearningCompTwo";
 
+const COLLAPSE_RANGE = 140;
+
 const HomeComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-  const measuredHeight = useSharedValue(0);
+  const continueHeight = useSharedValue(0);
   const collapseProgress = useSharedValue(1);
-
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollY.value = event.contentOffset.y;
     },
   });
-
   const isSearching = isSearchFocused || searchQuery.length > 0;
 
   useEffect(() => {
@@ -37,28 +39,41 @@ const HomeComponent = () => {
     });
   }, [isSearching]);
 
-  const collapsibleStyle = useAnimatedStyle(() => {
-    const height =
-      measuredHeight.value > 0
-        ? measuredHeight.value * collapseProgress.value
-        : undefined;
+  const continueLayoutStyle = useAnimatedStyle(() => {
+    if (continueHeight.value <= 0) {
+      return {};
+    }
+
+    const scrollHeight = interpolate(
+      scrollY.value,
+      [0, COLLAPSE_RANGE],
+      [continueHeight.value, 0],
+      Extrapolation.CLAMP,
+    );
+
+    const finalHeight = scrollHeight * collapseProgress.value;
+
+    const scrollMarginBottom = interpolate(
+      scrollY.value,
+      [0, COLLAPSE_RANGE],
+      [16, 0],
+      Extrapolation.CLAMP,
+    );
+
+    const finalMarginBottom = scrollMarginBottom * collapseProgress.value;
 
     return {
-      opacity: collapseProgress.value,
-      height,
+      height: finalHeight,
+      marginBottom: finalMarginBottom,
       overflow: "hidden",
     };
   });
 
-  const onMeasureLayout = useCallback(
-    (e: { nativeEvent: { layout: { height: number } } }) => {
-      const h = e.nativeEvent.layout.height;
-      if (h > 0 && Math.abs(measuredHeight.value - h) > 1) {
-        measuredHeight.value = h;
-      }
-    },
-    [],
-  );
+  const handleContinueHeightChange = useCallback((height: number) => {
+    if (height > 0) {
+      continueHeight.value = height;
+    }
+  }, []);
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery("");
@@ -84,16 +99,18 @@ const HomeComponent = () => {
         onFocusChange={setIsSearchFocused}
       />
 
-      {/* Moved outside the collapsible/height-locked wrapper — always renders,
-          never subject to measuredHeight clipping */}
       <BenefitsSection />
 
       <Animated.View
-        style={collapsibleStyle}
+        style={continueLayoutStyle}
         pointerEvents={isSearching ? "none" : "auto"}
       >
-        <View onLayout={onMeasureLayout}>
-          <ContinueLearningComp margintop={isSearching} scrollY={scrollY} />
+        <View style={styles.continueContent}>
+          <ContinueLearningComp
+            margintop={isSearching}
+            scrollY={scrollY}
+            onHeightChange={handleContinueHeightChange}
+          />
         </View>
       </Animated.View>
 
@@ -113,6 +130,10 @@ const styles = StyleSheet.create({
 
   contentContainer: {
     paddingHorizontal: 15,
+  },
+
+  continueContent: {
+    width: "100%",
   },
 
   loaderContainer: {
