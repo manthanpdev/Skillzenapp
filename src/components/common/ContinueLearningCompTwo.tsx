@@ -123,9 +123,7 @@ export const ContinueLearningComp = ({
 
       params: {
         topicId,
-
         topicTitle: topicTitle ?? "",
-
         lessonIndex: String(lessonIndex),
       },
     });
