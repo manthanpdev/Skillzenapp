@@ -68,9 +68,6 @@ const LessonComp = () => {
       : entry.topicId === activeTopicId,
   );
 
-  // If lessonIndex arrived via route params (Continue flow), trust it directly
-  // — no need to re-derive from savedProgress, it's already the exact index.
-  // Otherwise fall back to savedProgress (normal Topics-screen "Start" flow).
   const paramLessonIndex =
     params.lessonIndex !== undefined ? Number(params.lessonIndex) : undefined;
 
@@ -95,53 +92,56 @@ const LessonComp = () => {
       ? 0
       : Math.round((currentLessonIndex / topicLessons.length) * 100);
 
-  useEffect(() => {
-    if (!currentUser || !activeTopicId || topicLessons.length === 0) return;
+  const saveProgress = async (index: number, completed: boolean) => {
+    if (!currentUser || !activeTopicId) return;
+    const targetLesson = topicLessons[index];
+    if (!targetLesson) return;
 
-    dispatch(
-      updateLastReadTopic({
-        topicId: activeTopicId,
-        topicTitle: displayTopicTitle,
-        lastLessonIndex: currentLessonIndex,
-        lessonTitle: lesson.title,
-      }),
-    );
+    try {
+      setIsSaving(true);
 
-    dispatch(
-      updateTopicProgress({
-        topickTitle: displayTopicTitle,
-        topicId: activeTopicId,
-        lastLessonIndex: currentLessonIndex,
-        completed: savedProgress?.completed ?? false,
-      }),
-    );
-  }, [currentLessonIndex, topicLessons.length]);
+      await dispatch(
+        updateLastReadTopic({
+          topicId: activeTopicId,
+          topicTitle: displayTopicTitle,
+          lastLessonIndex: index,
+          lessonTitle: targetLesson.title,
+        }),
+      ).unwrap();
 
-  const handleNext = async () => {
+      await dispatch(
+        updateTopicProgress({
+          topickTitle: displayTopicTitle,
+          topicId: activeTopicId,
+          lastLessonIndex: index,
+          completed,
+        }),
+      ).unwrap();
+    } catch (err) {
+      console.log("Unable to save progress", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+   const handleNext = async () => {
     if (isSaving) return;
 
     if (isLastLesson) {
-      if (currentUser && activeTopicId) {
-        try {
-          setIsSaving(true);
-          await dispatch(
-            updateTopicProgress({
-              topickTitle: displayTopicTitle,
-              topicId: activeTopicId,
-              lastLessonIndex: currentLessonIndex,
-              completed: true,
-            }),
-          ).unwrap();
-        } catch (err) {
-          console.log("Unable to save progress", err);
-        } finally {
-          setIsSaving(false);
-        }
-      }
+      await saveProgress(currentLessonIndex, true);
       router.back();
     } else {
-      setCurrentLessonIndex((prev) => prev + 1);
+      const nextIndex = currentLessonIndex + 1;
+      await saveProgress(nextIndex, false);
+      setCurrentLessonIndex(nextIndex);
     }
+  };
+
+  const handlePrevious = async () => {
+    if (isSaving) return;
+    const prevIndex = currentLessonIndex - 1;
+    await saveProgress(prevIndex, false);
+    setCurrentLessonIndex(prevIndex);
   };
 
   if (isLessonsLoading) {
@@ -236,9 +236,7 @@ const LessonComp = () => {
             height={50}
             width="48%"
             disabled={isSaving}
-            onPress={() => {
-              setCurrentLessonIndex((prev) => prev - 1);
-            }}
+            onPress={handlePrevious}
             backgroundColor={theme.colors.card}
             textStyle={{ fontSize: 15 }}
             textColor={theme.colors.text}

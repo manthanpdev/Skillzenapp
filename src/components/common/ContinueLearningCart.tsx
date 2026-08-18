@@ -5,53 +5,49 @@ import { ArrowIcon, LessonsIcon } from "../../assets/Svg/SvgIcons";
 import { ContinueLearningCardProps } from "@/utils/types/Apptypes";
 
 export const ContinueLearningCart = ({
-  topicTitle,
   currentLesson,
   totalLessons,
   progressPercent,
   nextLessonLabel,
   onResume,
-  currentLessonTitle
+  currentLessonTitle,
 }: ContinueLearningCardProps) => {
   return (
     <View style={styles.card}>
-      {/* Header */}
       <View style={styles.headerRow}>
-        <View style={styles.headerLeft}>
-          <View style={styles.iconBadge}>
-            <LessonsIcon size={18} color={theme.colors.secondary} />
-          </View>
-          <View>
-            <Text style={styles.eyebrow}>continue learning</Text>
-            <Text style={styles.title}>{currentLessonTitle ?? "empty"}</Text>
-          </View>
+        <View style={styles.iconBadge}>
+          <LessonsIcon size={18} color={theme.colors.secondary} />
         </View>
-      </View>
-
-      {/* Progress row */}
-      <View style={styles.progressRow}>
-        <View style={styles.progressTextRow}>
-          <Text style={styles.lessonText}>
-            lesson {currentLesson} of {totalLessons}
+        <View style={styles.titleWrap}>
+          <Text style={styles.eyebrow}>continue learning</Text>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {currentLessonTitle ?? "empty"}
           </Text>
-          <Text style={styles.ringLabel}>{progressPercent}%</Text>
         </View>
-
-        <View style={styles.progressBarTrack}>
-          <View
-            style={[
-              styles.progressBarFill,
-              { width: `${Math.min(Math.max(progressPercent, 0), 100)}%` },
-            ]}
-          />
-        </View>
-
-        <Text style={styles.nextText} numberOfLines={1}>
-          Next : {nextLessonLabel}
-        </Text>
       </View>
 
-      {/* CTA */}
+      <View style={styles.box}>
+        <Text style={styles.lessonText}>
+          lesson {currentLesson} of {totalLessons}
+        </Text>
+        <Text style={styles.percentage}>{progressPercent}%</Text>
+      </View>
+
+      <View style={styles.progressBarTrack}>
+        <View
+          style={[
+            styles.progressBarFill,
+            { width: `${Math.min(Math.max(progressPercent, 0), 100)}%` },
+          ]}
+        />
+      </View>
+
+      {nextLessonLabel && (
+        <Text style={styles.nextText} numberOfLines={1}>
+          Next: {nextLessonLabel}
+        </Text>
+      )}
+
       <TouchableOpacity
         style={styles.resumeButton}
         onPress={onResume}
@@ -71,23 +67,19 @@ export const ContinueLearningCart = ({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
+    minHeight: 175, // 👈 THIS is how you make the card bigger. One number.
     backgroundColor: theme.colors.card,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.lg,
-    padding: theme.spacing.md,
-    marginHorizontal: "auto",
+    justifyContent: "space-between", // spreads content nicely if you increase minHeight
+    padding: 15,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: theme.spacing.sm + 4,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
     gap: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   iconBadge: {
     width: 34,
@@ -97,6 +89,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  titleWrap: { flex: 1, minWidth: 0 },
   eyebrow: {
     fontSize: 10,
     color: theme.colors.muted,
@@ -108,24 +101,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: theme.colors.text,
   },
-
-  progressRow: {
-    marginBottom: theme.spacing.sm + 4,
-  },
-  progressTextRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
   lessonText: {
     fontSize: theme.fontSize.small,
     color: theme.colors.textSecondary,
-  },
-  ringLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: theme.colors.text,
+    marginBottom: 6,
   },
   progressBarTrack: {
     height: 6,
@@ -139,9 +118,18 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.round,
     backgroundColor: theme.colors.primary,
   },
+  percentage: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.small,
+  },
+  box: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   nextText: {
     fontSize: theme.fontSize.caption,
     color: theme.colors.placeholder,
+    marginBottom: theme.spacing.sm,
   },
   resumeButton: {
     flexDirection: "row",

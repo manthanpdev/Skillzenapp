@@ -51,7 +51,7 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
     [lessons],
   );
 
-  const { currentLessonTitle, nextLessonLabel, progressPercent, isLastLesson } =
+  const { currentLessonTitle, nextLessonLabel, progressPercent } =
     useMemo(() => {
       if (topicLessons.length === 0) {
         return {
@@ -80,6 +80,7 @@ export const ContinueLearningComp = ({ scrollY, margintop }: any) => {
   // Pass topicId, title, AND the exact lesson index the user should land on.
   // LessonComp uses this directly as its initial index instead of re-deriving
   // it from savedProgress, so there's zero lookup/race risk on arrival.
+  
   const handleResume = () => {
     if (!topicId) return;
     router.navigate({

@@ -91,6 +91,7 @@ export const updateTopicProgress = createAsyncThunk(
     }
 
     const userRef = doc(db, "users", currentUser.uid);
+    
     const userSnap = await getDoc(userRef);
 
     const rawUserData: any[] = userSnap.exists()
