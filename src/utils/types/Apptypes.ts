@@ -127,6 +127,7 @@ export type UserData = {
   userdata: TopicProgress[];
   uid: string;
   photoURL: string | null;
+  lastReadTopic?: LastReadTopic | null
 };
 
 export type ProfileCompProps = {
@@ -149,11 +150,21 @@ export type TopicListItem = {
   totalLessons: number;
 };
 
+export type LastReadTopic = {
+  topicId: string;
+  topicTitle: string;
+  lastLessonIndex: any;
+  updatedAt: number;
+  lessonTitle?: string;
+};
+
+
 export type GlobalState = {
   currentUser: UserData | null;
   getStartedCompleted: boolean;
   isLoading: boolean;
   error: string | null;
+
 
   categories: Category[];
   topics: Topic[];
@@ -286,13 +297,16 @@ export type AIContext = {
 };
 
 export type ContinueLearningCardProps = {
-  topicTitle: string;
-  currentLesson: number;
-  totalLessons: number;
-  progressPercent: number; // 0-100
-  nextLessonLabel: string;
-  streakDays: number;
-  onResume: () => void;
+  topicTitle?: string;
+  currentLesson?: number;
+  currentLessonTitle?: string;
+  totalLessons?: number;
+  progressPercent?: any;
+  nextLessonLabel?: string;
+  streakDays?: number;
+  isLastLesson?: boolean;
+  isLoading?: boolean;
+  onResume?: () => void;
 };
 
 type IndicatorSize = "small" | "large";

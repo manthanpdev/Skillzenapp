@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, Timestamp, where } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 
 import { Category, Topic, Lesson, TopicProgress } from "../utils/types/Apptypes";
@@ -52,6 +52,20 @@ export const fetchLessonsByTopic = createAsyncThunk(
   },
 );
 
+export const fetchTopicById = createAsyncThunk(
+  "topics/fetchById",
+  async (topicId: string) => {
+    const topicRef = doc(db, "topics", topicId);
+    const topicSnap = await getDoc(topicRef);
+
+    if (!topicSnap.exists()) {
+      throw new Error("Topic not found");
+    }
+
+    return { id: topicSnap.id, ...topicSnap.data() } as Topic;
+  },
+);
+
 export const logOutUser = createAsyncThunk("user/logout", async () => {
   await logOutCurrentUser()
 })
@@ -62,7 +76,7 @@ export const updateTopicProgress = createAsyncThunk(
   "global/updateTopicProgress",
   async (
     payload: {
-      categoryTitle: string;
+      topickTitle: string;
       topicId: string;
       lastLessonIndex: number;
       completed: boolean;
@@ -77,18 +91,17 @@ export const updateTopicProgress = createAsyncThunk(
     }
 
     const userRef = doc(db, "users", currentUser.uid);
+    
     const userSnap = await getDoc(userRef);
 
     const rawUserData: any[] = userSnap.exists()
       ? (userSnap.data().userdata ?? [])
       : [];
 
-    // Convert any leftover Firestore Timestamps (from old buggy writes)
-    // into plain epoch millis so Redux never sees a class instance.
     const toMillis = (value: any): number => {
       if (typeof value === "number") return value;
-      if (value?.toMillis) return value.toMillis(); // Firestore Timestamp
-      if (value?.seconds) return value.seconds * 1000; // plain {seconds,nanoseconds}
+      if (value?.toMillis) return value.toMillis();
+      if (value?.seconds) return value.seconds * 1000;
       return Date.now();
     };
 
@@ -100,7 +113,7 @@ export const updateTopicProgress = createAsyncThunk(
 
     const existingIndex = existingUserData.findIndex(
       (entry) =>
-        entry.categoryTitle === payload.categoryTitle &&
+        entry.topicTitle === payload.topickTitle &&
         entry.topicId === payload.topicId,
     );
 
@@ -118,7 +131,7 @@ export const updateTopicProgress = createAsyncThunk(
       updatedUserData = [
         ...existingUserData,
         {
-          categoryTitle: payload.categoryTitle,
+          topicTitle: payload.topickTitle,
           topicId: payload.topicId,
           lastLessonIndex: payload.lastLessonIndex,
           completed: payload.completed,
@@ -134,6 +147,45 @@ export const updateTopicProgress = createAsyncThunk(
       { merge: true },
     );
 
-    return { ...currentUser, userdata: updatedUserData };
+    return updatedUserData;
+  },
+);
+
+
+export const updateLastReadTopic = createAsyncThunk(
+  "global/updateLastReadTopic",
+  async (
+    payload: {
+      topicId: string;
+      topicTitle: string;
+      lastLessonIndex: number;
+      lessonTitle?:string
+    },
+    { getState },
+  ) => {
+    const state = getState() as RootState;
+    const currentUser = state.global.currentUser;
+
+    if (!currentUser) {
+      throw new Error("User not found");
+    }
+
+    const userRef = doc(db, "users", currentUser.uid);
+
+    const lastReadTopic = {
+      topicId: payload.topicId,
+      topicTitle: payload.topicTitle,
+      lastLessonIndex: payload.lastLessonIndex,
+      updatedAt: Date.now(),
+      lessonTitle:payload.lessonTitle
+    };
+
+    await setDoc(
+      userRef,
+      { lastReadTopic, updatedAt: serverTimestamp() },
+      { merge: true },
+    );
+
+    return lastReadTopic;
   },
 );

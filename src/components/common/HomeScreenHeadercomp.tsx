@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 const HomeScreenHeaderComp = () => {
   const { currentUser } = useSelector((state: RootState) => state.global);
 
+
   return (
     <View style={styles.container}>
       <View style={styles.leftContent}>

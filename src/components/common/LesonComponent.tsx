@@ -6,7 +6,7 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import AppButton from "../ReusableComp/AppButton";
 import {
@@ -18,34 +18,69 @@ import { theme } from "@/utils/theme/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { updateTopicProgress } from "@/redux/actions";
+import {
+  updateLastReadTopic,
+  updateTopicProgress,
+  fetchLessonsByTopic,
+} from "@/redux/actions";
+import { setSelectedTopic } from "@/redux/reducers";
 
 const LessonComp = () => {
   const router = useRouter();
-
   const dispatch = useDispatch<AppDispatch>();
+
+  const params = useLocalSearchParams<{
+    topicId?: string;
+    topicTitle?: string;
+    lessonIndex?: string;
+  }>();
 
   const { lessons, selectedTopicId, topics, currentUser, isLessonsLoading } =
     useSelector((state: RootState) => state.global);
 
-  const selectedTopic = topics.find((topic) => topic.id === selectedTopicId);
+  const activeTopicId = params.topicId || selectedTopicId;
+
+  useEffect(() => {
+    if (params.topicId && params.topicId !== selectedTopicId) {
+      dispatch(setSelectedTopic(params.topicId));
+    }
+  }, [params.topicId]);
+
+  useEffect(() => {
+    if (!activeTopicId) return;
+    const alreadyLoaded = lessons.some((l) => l.topicId === activeTopicId);
+    if (!alreadyLoaded) {
+      dispatch(fetchLessonsByTopic(activeTopicId));
+    }
+  }, [activeTopicId]);
+
+  const selectedTopic = topics.find((topic) => topic.id === activeTopicId);
+  const displayTopicTitle = selectedTopic?.title ?? params.topicTitle ?? "";
 
   const topicLessons = lessons
-    .filter((lesson) => lesson.topicId === selectedTopicId)
+    .filter((lesson) => lesson.topicId === activeTopicId)
     .sort((a, b) => a.lessonNumber - b.lessonNumber);
 
-  // Find saved progress for this exact topic (if any)
-  const savedProgress = currentUser?.userdata?.find(
-    (entry) =>
-      entry.categoryTitle === selectedTopic?.title &&
-      entry.topicId === selectedTopicId,
+  const savedProgress = currentUser?.userdata?.find((entry) =>
+    selectedTopic
+      ? entry.topicId === activeTopicId &&
+        entry.topicTitle === selectedTopic.title
+      : entry.topicId === activeTopicId,
   );
 
-  const [currentLessonIndex, setCurrentLessonIndex] = useState(
-    savedProgress?.completed ? 0 : (savedProgress?.lastLessonIndex ?? 0),
-  );
+  const paramLessonIndex =
+    params.lessonIndex !== undefined ? Number(params.lessonIndex) : undefined;
 
-  // tracks whether the Next/Done tap is currently waiting on Firestore
+  const initialLessonIndex =
+    paramLessonIndex !== undefined && !Number.isNaN(paramLessonIndex)
+      ? paramLessonIndex
+      : savedProgress?.completed
+        ? 0
+        : (savedProgress?.lastLessonIndex ?? 0);
+
+  const [currentLessonIndex, setCurrentLessonIndex] =
+    useState(initialLessonIndex);
+
   const [isSaving, setIsSaving] = useState(false);
 
   const lesson = topicLessons[currentLessonIndex];
@@ -57,45 +92,56 @@ const LessonComp = () => {
       ? 0
       : Math.round((currentLessonIndex / topicLessons.length) * 100);
 
-  // Save progress whenever the lesson index changes (Next / Previous)
-  useEffect(() => {
-    if (!currentUser || !selectedTopicId || topicLessons.length === 0) return;
+  const saveProgress = async (index: number, completed: boolean) => {
+    if (!currentUser || !activeTopicId) return;
+    const targetLesson = topicLessons[index];
+    if (!targetLesson) return;
 
-    dispatch(
-      updateTopicProgress({
-        categoryTitle: selectedTopic?.title ?? "",
-        topicId: selectedTopicId,
-        lastLessonIndex: currentLessonIndex,
-        completed: isLastLesson,
-      }),
-    );
-  }, [currentLessonIndex]);
+    try {
+      setIsSaving(true);
 
-  const handleNext = async () => {
-    if (isSaving) return; // guard against double taps while a save is in flight
+      await dispatch(
+        updateLastReadTopic({
+          topicId: activeTopicId,
+          topicTitle: displayTopicTitle,
+          lastLessonIndex: index,
+          lessonTitle: targetLesson.title,
+        }),
+      ).unwrap();
+
+      await dispatch(
+        updateTopicProgress({
+          topickTitle: displayTopicTitle,
+          topicId: activeTopicId,
+          lastLessonIndex: index,
+          completed,
+        }),
+      ).unwrap();
+    } catch (err) {
+      console.log("Unable to save progress", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+   const handleNext = async () => {
+    if (isSaving) return;
 
     if (isLastLesson) {
-      if (currentUser && selectedTopicId) {
-        try {
-          setIsSaving(true);
-          await dispatch(
-            updateTopicProgress({
-              categoryTitle: selectedTopic?.title ?? "",
-              topicId: selectedTopicId,
-              lastLessonIndex: currentLessonIndex,
-              completed: true,
-            }),
-          ).unwrap();
-        } catch (err) {
-          console.log("Unable to save progress", err);
-        } finally {
-          setIsSaving(false);
-        }
-      }
+      await saveProgress(currentLessonIndex, true);
       router.back();
     } else {
-      setCurrentLessonIndex((prev) => prev + 1);
+      const nextIndex = currentLessonIndex + 1;
+      await saveProgress(nextIndex, false);
+      setCurrentLessonIndex(nextIndex);
     }
+  };
+
+  const handlePrevious = async () => {
+    if (isSaving) return;
+    const prevIndex = currentLessonIndex - 1;
+    await saveProgress(prevIndex, false);
+    setCurrentLessonIndex(prevIndex);
   };
 
   if (isLessonsLoading) {
@@ -190,9 +236,7 @@ const LessonComp = () => {
             height={50}
             width="48%"
             disabled={isSaving}
-            onPress={() => {
-              setCurrentLessonIndex((prev) => prev - 1);
-            }}
+            onPress={handlePrevious}
             backgroundColor={theme.colors.card}
             textStyle={{ fontSize: 15 }}
             textColor={theme.colors.text}
@@ -229,11 +273,7 @@ const LessonComp = () => {
 export default LessonComp;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-
+  container: { flex: 1, backgroundColor: theme.colors.background },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
@@ -241,53 +281,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     backgroundColor: theme.colors.background,
   },
-
   emptyTitle: {
     color: theme.colors.text,
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 8,
   },
-
   emptySubtitle: {
     color: theme.colors.muted,
     fontSize: 15,
     textAlign: "center",
     marginBottom: 20,
   },
-
   header: {
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.md,
   },
-
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-
-  backButton: {
-    width: 10,
-    height: 40,
-  },
-
+  backButton: { width: 10, height: 40 },
   loaderContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.colors.background,
   },
-
   lessonTitle: {
     flex: 1,
     textAlign: "center",
     color: theme.colors.text,
     fontSize: 20,
     fontWeight: "700",
-    lineHeight: 20,
   },
-
   lessonCount: {
     marginTop: 6,
     color: theme.colors.muted,
@@ -295,14 +323,12 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "left",
   },
-
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: theme.spacing.md,
     marginBottom: theme.spacing.md,
   },
-
   progressTrack: {
     flex: 1,
     height: 8,
@@ -311,38 +337,29 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: 12,
   },
-
   progressFill: {
     height: "100%",
     backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.round,
   },
-
   progressText: {
     color: theme.colors.primary,
     fontSize: 14,
     fontWeight: "700",
   },
-
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.md,
-  },
-
+  scrollView: { flex: 1, paddingHorizontal: theme.spacing.md },
   sectionTitle: {
     color: theme.colors.primary,
     fontSize: 21,
     fontWeight: "700",
     marginBottom: theme.spacing.sm,
   },
-
   overviewText: {
     color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 22,
     marginBottom: theme.spacing.md,
   },
-
   exampleCard: {
     backgroundColor: theme.colors.card,
     borderRadius: theme.radius.md,
@@ -350,14 +367,12 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     padding: theme.spacing.md,
   },
-
   exampleTitle: {
     color: theme.colors.primary,
     fontSize: 17,
     fontWeight: "700",
     marginBottom: theme.spacing.sm,
   },
-
   codeCard: {
     backgroundColor: "#111827",
     borderRadius: 12,
@@ -366,14 +381,12 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: theme.spacing.sm,
   },
-
   codeText: {
     color: "#E5E7EB",
     fontSize: 15,
     lineHeight: 23,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
   },
-
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
