@@ -67,12 +67,12 @@ export const ContinueLearningCart = ({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    minHeight: 175, // 👈 THIS is how you make the card bigger. One number.
+    minHeight: 175, 
     backgroundColor: theme.colors.card,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.lg,
-    justifyContent: "space-between", // spreads content nicely if you increase minHeight
+    justifyContent: "space-between", 
     padding: 15,
   },
   headerRow: {

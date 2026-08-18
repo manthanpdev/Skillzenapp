@@ -9,6 +9,7 @@ import { theme } from "../utils/theme/Theme";
 import { store } from "../redux/store";
 
 const RootLayout = () => {
+
   return (
     <GestureHandlerRootView>
       <Provider store={store}>
