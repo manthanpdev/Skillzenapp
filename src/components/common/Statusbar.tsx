@@ -2,6 +2,7 @@ import { StatusBar } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const StatusBarComponent = () => {
+  
   const insets = useSafeAreaInsets();
 
   return (
