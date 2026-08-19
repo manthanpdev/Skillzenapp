@@ -28,7 +28,6 @@
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
-        "@react-native-firebase/app-check",
       [
         "expo-splash-screen",
         {
