@@ -4,18 +4,16 @@
     "slug": "Skillzenapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+     "icon": "./assets/images/forgroundImage.png",
     "scheme": "skillzenapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/forgroundImage.png"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/forgroundImage.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.Skillzenapp",
@@ -28,7 +26,6 @@
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
-        "@react-native-firebase/app-check",
       [
         "expo-splash-screen",
         {

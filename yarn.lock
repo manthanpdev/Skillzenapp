@@ -1832,11 +1832,6 @@
   dependencies:
     idb "8.0.3"
 
-"@react-native-firebase/app-check@^26.2.0":
-  version "26.2.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app-check/-/app-check-26.2.0.tgz#25228750d911dfd793bb6716d5ea01bccd3a4249"
-  integrity sha512-iQ3xNfFoxip+CrEse3yUsGDZnpLUM13pYngbxb72AZVEJ1IIiDFIf5hdW/689rfj/7A/gSrbcSyISbA1uBeTgg==
-
 "@react-native-firebase/app@^26.2.0":
   version "26.2.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-26.2.0.tgz#5ea7a3cd17129d0a13d8a25a9322ddc0fdfbb9c7"
