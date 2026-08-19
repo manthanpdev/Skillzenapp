@@ -1,8 +1,10 @@
-// services/Groq.ts
 
-import { GROQ_API_KEY } from "./Groqkey";
+const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY
 
-// move to env var later
+if (!GROQ_API_KEY) {
+  console.log("❌ GROQ API KEY IS MISSING");
+}
+
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
