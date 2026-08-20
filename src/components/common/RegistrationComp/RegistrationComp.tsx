@@ -7,9 +7,9 @@ import {
   Text,
   View,
 } from "react-native";
-import AppTextInput from "../ReusableComp/CustomTextInput";
-import AppButton from "../ReusableComp/AppButton";
-import { GoogleIcon } from "../../assets/Svg/SvgIcons";
+import AppTextInput from "../../ReusableComp/CustomTextInput";
+import AppButton from "../../ReusableComp/AppButton";
+import { GoogleIcon } from "../../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
 import { RegistrationCompProps } from "@/utils/types/Apptypes";
 

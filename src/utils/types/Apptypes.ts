@@ -1,6 +1,7 @@
 import { ComponentType, ReactElement, ReactNode } from "react";
 import {
   DimensionValue,
+  LayoutChangeEvent,
   StyleProp,
   TextInputProps,
   TextStyle,
@@ -250,6 +251,27 @@ export type Topic = {
   totalLessons: number;
 };
 
+// ===== TopickComp split types =====
+
+export type TopicsHeaderProps = {
+  title: string;
+  onBack: () => void;
+};
+
+export type TopicRowProps = {
+  item: Topic;
+  accentColor: string;
+  percent: number;
+  completed: boolean;
+  onPress: () => void;
+};
+
+export type RestartTopicModalProps = {
+  visible: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+};
+
 export type Category = {
   id: string;
   title: string;
@@ -323,5 +345,46 @@ export type ChatMessage = {
   role: "user" | "assistant";
   text: string;
   animate?: boolean; // only true for a freshly-arrived assistant message
+};
+
+// ===== AIchatcomp split types =====
+
+export type InlineTextProps = {
+  line: string;
+  style: StyleProp<TextStyle>;
+};
+
+export type FormattedMessageProps = {
+  text: string;
+};
+
+export type TypingMessageProps = {
+  fullText: string;
+  onProgress?: () => void;
+};
+
+export type ChatHeaderProps = {
+  onSettingsPress?: () => void;
+  onLayout?: (event: LayoutChangeEvent) => void;
+};
+
+export type WelcomeCardProps = {
+  fullName?: string;
+};
+
+export type SuggestedQuestionsProps = {
+  onSelectQuestion: (question: string) => void;
+};
+
+export type ChatMessageBubbleProps = {
+  message: ChatMessage;
+  onTypingProgress?: () => void;
+};
+
+export type ChatInputBarProps = {
+  value: string;
+  onChangeText: (text: string) => void;
+  onSend: () => void;
+  disabled: boolean;
 };
 

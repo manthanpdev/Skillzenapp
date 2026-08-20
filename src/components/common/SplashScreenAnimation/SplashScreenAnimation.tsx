@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef } from "react";
 import { Animated, Dimensions, Easing, StyleSheet, View } from "react-native";
-import { theme } from "../../utils/theme/Theme";
+import { theme } from "../../../utils/theme/Theme";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/redux/store";
 import { onAuthStateChanged } from "firebase/auth";
@@ -9,7 +9,7 @@ import { auth } from "@/config/firebaseAuth";
 import { clearUser, setUser } from "@/redux/reducers";
 import { toAppUser } from "@/services/authService";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
-import { AppLogo } from "../../assets/Svg/SvgIcons";
+import { AppLogo } from "../../../assets/Svg/SvgIcons";
 import { fetchCategories } from "@/redux/actions";
 import * as SplashScreen from "expo-splash-screen";
 

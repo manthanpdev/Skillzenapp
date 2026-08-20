@@ -1,4 +1,4 @@
-import TopickComp from "@/components/common/TopickComp";
+import TopickComp from "@/components/common/Topics/TopickComp";
 
 const TopickScreen = () => {
   return <TopickComp />;

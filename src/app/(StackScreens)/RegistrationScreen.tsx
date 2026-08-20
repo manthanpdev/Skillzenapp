@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import { RegistrationFormValues } from "@/utils/types/Apptypes";
-import RegistrationComp from "@/components/common/RegistrationComp";
+import RegistrationComp from "@/components/common/RegistrationComp/RegistrationComp";
 import {
   registerUser,
   signInWithGoogle,

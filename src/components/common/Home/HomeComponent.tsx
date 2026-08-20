@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import HomeScreenHeaderComp from "./HomeScreenHeadercomp";
-import CustomeSearch from "../ReusableComp/CustomeSearch";
+import CustomeSearch from "../../ReusableComp/CustomeSearch";
 import BenefitsSection from "./BenefitsSection";
 import CategoriesComp from "./CatogeriesComp";
 import { ContinueLearningComp } from "./ContinueLearningCompTwo";

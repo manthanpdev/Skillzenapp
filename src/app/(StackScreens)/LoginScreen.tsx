@@ -1,4 +1,4 @@
-import LoginComponent from "@/components/common/LoginComponent";
+import LoginComponent from "@/components/common/LoginComponent/LoginComponent";
 
 const LoginScreen = () => {
   return <LoginComponent />;

@@ -4,7 +4,6 @@ if (!GROQ_API_KEY) {
   console.log("❌ GROQ API KEY IS MISSING");
 }
 
-
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const SYSTEM_PROMPT = `You are a helpful assistant inside a mobile chat app for a  learning app called SkillZen.

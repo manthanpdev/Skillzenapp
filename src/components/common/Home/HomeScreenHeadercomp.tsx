@@ -1,5 +1,5 @@
 import { RootState } from "@/redux/store";
-import { NotificationIcon } from "../../assets/Svg/SvgIcons";
+import { NotificationIcon } from "../../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
 import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";

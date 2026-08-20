@@ -10,11 +10,11 @@ import {
 import { useState } from "react";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
-import CustomTextInput from "../ReusableComp/CustomTextInput";
-import AppButton from "../ReusableComp/AppButton";
+import CustomTextInput from "../../ReusableComp/CustomTextInput";
+import AppButton from "../../ReusableComp/AppButton";
 import { LoginErrorsProps } from "@/utils/types/Apptypes";
 import { theme } from "@/utils/theme/Theme";
-import { GoogleIcon } from "../../assets/Svg/SvgIcons";
+import { GoogleIcon } from "../../../assets/Svg/SvgIcons";
 import { loginUser, signInWithGoogle, toAppUser } from "@/services/authService";
 import type { AppDispatch } from "@/redux/store";
 import { setUser } from "@/redux/reducers";

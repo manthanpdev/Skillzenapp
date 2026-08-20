@@ -1,8 +1,8 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
-import { theme } from "../../utils/theme/Theme";
-import { CategoriesCompProps, Category } from "../../utils/types/Apptypes";
+import { theme } from "../../../utils/theme/Theme";
+import { CategoriesCompProps, Category } from "../../../utils/types/Apptypes";
 import { router } from "expo-router";
 import CategoryCard from "./CategoryCard";
 import { setSelectedCategory } from "@/redux/reducers";
