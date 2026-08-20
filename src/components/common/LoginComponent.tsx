@@ -1,6 +1,5 @@
 import {
   Alert,
-  ActivityIndicator,
   StyleSheet,
   View,
   ScrollView,

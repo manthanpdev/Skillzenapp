@@ -7,4 +7,3 @@ const LessonScreen = () => {
 }
 
 export default LessonScreen
-
