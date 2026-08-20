@@ -27,7 +27,6 @@ const Profile = () => {
         "Permission required",
         "Camera permission is required to take a photo.",
       );
-
       return;
     }
 

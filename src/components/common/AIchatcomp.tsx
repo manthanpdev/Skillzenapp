@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -26,20 +25,8 @@ import AppTextInput from "../ReusableComp/CustomTextInput";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { askGroq } from "@/services/Gemini";
-
-const suggestedQuestions = [
-  "What is React Native?",
-  "Explain useEffect",
-  "Flexbox in RN",
-  "State vs Props",
-];
-
-type ChatMessage = {
-  id: string;
-  role: "user" | "assistant";
-  text: string;
-  animate?: boolean; // only true for a freshly-arrived assistant message
-};
+import { ChatMessage } from "@/utils/types/Apptypes";
+import { suggestedQuestions } from "@/utils/constants/dummyTopicks";
 
 /**
  * Renders **bold**, `inline code`, and plain text within a single line.
