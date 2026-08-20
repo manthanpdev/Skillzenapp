@@ -317,3 +317,11 @@ export type AppActivityIndicatorProps = {
   fullscreen?: boolean;
   style?: ViewStyle;
 };
+
+export type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  text: string;
+  animate?: boolean; // only true for a freshly-arrived assistant message
+};
+

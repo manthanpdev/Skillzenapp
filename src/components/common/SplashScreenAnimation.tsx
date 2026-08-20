@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Animated, Dimensions, Easing, StyleSheet, View } from "react-native";
 import { theme } from "../../utils/theme/Theme";
 import { useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ import { toAppUser } from "@/services/authService";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { AppLogo } from "../../assets/Svg/SvgIcons";
 import { fetchCategories } from "@/redux/actions";
-import { seedTopics } from "../../assets/seedTopics";
+import * as SplashScreen from "expo-splash-screen";
 
 const { width, height } = Dimensions.get("window");
 const TRACK_WIDTH = width * 0.6;
@@ -47,9 +47,9 @@ const SplashScreenAnimation = () => {
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textTranslateY = useRef(new Animated.Value(8)).current;
 
-  // useEffect(()=>{
-  //   seedTopics()
-  // })
+  const handleLayout = useCallback(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   useEffect(() => {
     let authUser: typeof auth.currentUser = null;
@@ -187,7 +187,9 @@ const SplashScreenAnimation = () => {
   });
 
   return (
-    <Animated.View style={[styles.container, { opacity: screenOpacity }]}>
+    <Animated.View 
+    onLayout={handleLayout}
+    style={[styles.container, { opacity: screenOpacity }]}>
       <View style={styles.logoWrapper}>
         {/* true radial glow — soft feathered falloff, matches the reference image */}
         <Animated.View

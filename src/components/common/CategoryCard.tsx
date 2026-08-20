@@ -12,7 +12,6 @@ import Animated, {
   useSharedValue,
   withDelay,
   withRepeat,
-  withSequence,
   withTiming,
   cancelAnimation,
 } from "react-native-reanimated";
