@@ -8,12 +8,12 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import AppButton from "../ReusableComp/AppButton";
+import AppButton from "../../ReusableComp/AppButton";
 import {
   BackIcon,
   ChevronRightIcon,
   DoneIcon,
-} from "../../assets/Svg/SvgIcons";
+} from "../../../assets/Svg/SvgIcons";
 import { theme } from "@/utils/theme/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";

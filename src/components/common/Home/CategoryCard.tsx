@@ -15,9 +15,9 @@ import Animated, {
   withTiming,
   cancelAnimation,
 } from "react-native-reanimated";
-import { theme } from "../../utils/theme/Theme";
+import { theme } from "../../../utils/theme/Theme";
 import { Category } from "@/utils/types/Apptypes";
-import { ChevronRightIcon } from "../../assets/Svg/SvgIcons";
+import { ChevronRightIcon } from "../../../assets/Svg/SvgIcons";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 

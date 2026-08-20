@@ -1,4 +1,4 @@
-import GetStartedAnimation from "@/components/common/GetStartedcomp";
+import GetStartedAnimation from "@/components/common/GetStartedcomp/GetStartedcomp";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { StyleSheet } from "react-native";

@@ -1,4 +1,4 @@
-import SplashScreenAnimation from "@/components/common/SplashScreenAnimation";
+import SplashScreenAnimation from "@/components/common/SplashScreenAnimation/SplashScreenAnimation";
 
 const SplashScreen = () => {
   return <SplashScreenAnimation />;

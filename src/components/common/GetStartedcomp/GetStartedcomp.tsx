@@ -12,13 +12,13 @@ import {
 } from "react-native";
 
 import { Stack, useRouter } from "expo-router";
-import { theme } from "../../utils/theme/Theme";
+import { theme } from "../../../utils/theme/Theme";
 
 // import { pages } from "@/src/assets/data/GetStartedData";
 import { Feature } from "@/utils/types/Apptypes";
-import { AppLogo, ArrowIcon, RocketIcon } from "../../assets/Svg/SvgIcons";
-import { pages } from "../../utils/constants/GetStartedData";
-import AppButton from "../ReusableComp/AppButton";
+import { AppLogo, ArrowIcon, RocketIcon } from "../../../assets/Svg/SvgIcons";
+import { pages } from "../../../utils/constants/GetStartedData";
+import AppButton from "../../ReusableComp/AppButton";
 
 // import { completeGetStarted } from "@/redux/actions";
 // import type { AppDispatch } from "@/redux/store";

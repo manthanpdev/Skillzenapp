@@ -1,4 +1,4 @@
-import HomeComponent from "@/components/common/HomeComponent";
+import HomeComponent from "@/components/common/Home/HomeComponent";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 

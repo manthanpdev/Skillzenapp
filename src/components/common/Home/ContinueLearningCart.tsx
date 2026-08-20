@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
-import { theme } from "../../utils/theme/Theme";
-import { ArrowIcon, LessonsIcon } from "../../assets/Svg/SvgIcons";
+import { theme } from "../../../utils/theme/Theme";
+import { ArrowIcon, LessonsIcon } from "../../../assets/Svg/SvgIcons";
 import { ContinueLearningCardProps } from "@/utils/types/Apptypes";
 interface Props extends ContinueLearningCardProps {
   isCompleted: boolean;

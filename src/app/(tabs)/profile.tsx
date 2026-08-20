@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 
-import ProfileComp from "@/components/common/ProfileComp";
+import ProfileComp from "@/components/common/Profile/ProfileComp";
 
 import type { AppDispatch, RootState } from "@/redux/store";
 import { logOutUser } from "@/redux/actions";
